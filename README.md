@@ -83,16 +83,16 @@ Here is an advanced example which creates and adds a box named 'macinbox-xl-nogu
 This script performs the following actions:
 
 1. Creates a new blank disk image
-* Installs macOS
-* Installs the VMware tools
-* Updates the SystemPolicyConfiguration KextPolicy to allow the VMware tools kernel extension to load automatically
-* Adds an .InstallerConfiguration file to automate the Setup Assistant app and create a user account on first boot
-* Enables password-less sudo
-* Enables sshd
-* Adds an rc.installer_cleanup script which waits for the user account to be created on first boot and then installs the default insecure Vagrant SSH key in the user's home directory
-* Converts the image into a VMDK
-* Creates a Vagrant box for the VMware provider using the VMDK
-* Adds the box to Vagrant
+1. Installs macOS
+1. Installs the VMware tools
+1. Updates the SystemPolicyConfiguration KextPolicy to allow the VMware tools kernel extension to load automatically
+1. Adds an .InstallerConfiguration file to automate the Setup Assistant app and create a user account on first boot
+1. Enables password-less sudo
+1. Enables sshd
+1. Adds an rc.installer_cleanup script which waits for the user account to be created on first boot and then installs the default insecure Vagrant SSH key in the user's home directory
+1. Converts the image into a VMDK
+1. Creates a Vagrant box for the VMware provider using the VMDK
+1. Adds the box to Vagrant
 
 This script is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant VMware box that boots macOS with a seamless user experience. However, this script is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
 
