@@ -65,6 +65,7 @@ Usage: macinbox [options]
     -f, --full NAME                  Full name of the user (default: Vagrant)
     -p, --password PASSWORD          Password of the user (default: vagrant)
         --no-auto-login              Disable auto login
+        --no-skip-mini-buddy         Show the mini buddy on first login
         --no-gui                     Disable the GUI
         --debug                      Enable debug mode
     -h, --help

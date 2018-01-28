@@ -50,6 +50,7 @@ OptionParser.new do |o|
   o.on('-f', '--full NAME', 'Full name of the user (default: Vagrant)') { |v| $options[:full_name] = v }
   o.on('-p', '--password PASSWORD', 'Password of the user (default: vagrant)') { |v| $options[:password] = v }
   o.on('--no-auto-login', 'Disable auto login') { |v| $options[:auto_login] = v ? "true" : "false" }
+  o.on('--no-skip-mini-buddy', 'Show the mini buddy on first login') { |v| $options[:skip_mini_buddy] = v ? "true" : "false" }
   o.on('--no-gui', 'Disable the GUI') { |v| $options[:gui] = v ? "true" : "false" }
   o.on('--debug', 'Enable debug mode') { |v| $options[:debug] = v }
   o.on('-h', '--help') { puts o; exit }
@@ -75,6 +76,7 @@ end
   :gui => "MACINBOX_GUI",
   :password => "MACINBOX_PASSWORD",
   :auto_login => "MACINBOX_AUTO_LOGIN",
+  :skip_mini_buddy => "MACINBOX_SKIP_MINI_BUDDY",
   :box_name => "MACINBOX_BOX_NAME",
   :memory_size => "MACINBOX_MEMORY_SIZE",
   :cpu_count => "MACINBOX_CPU_COUNT",
