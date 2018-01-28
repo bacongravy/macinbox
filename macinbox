@@ -105,19 +105,18 @@ USER_TEMP_DIR = `sudo -u "#{ENV["SUDO_USER"]}" /usr/bin/mktemp -d -t macinbox_us
   end
 end
 
-log_info "Creating box..."
-
 Dir.chdir(ROOT_TEMP_DIR) do
+  log_info "Preparing image from installer..."
   run_command_as_root "#{BIN_DIR}/prepare_image_from_installer.sh", INSTALLER_PATH, "macinbox.dmg"
+  log_info "Preparing VMDK from image..."
   run_command_as_root "#{BIN_DIR}/prepare_vmdk_from_image.sh", "macinbox.dmg", "macinbox.vmdk"
+  log_info "Preparing box from VMDK..."
   run_command_as_root "#{BIN_DIR}/prepare_box_from_vmdk.sh", "macinbox.vmdk", "macinbox.box"
 end
 
-FileUtils.mv "#{ROOT_TEMP_DIR}/macinbox.box", "#{USER_TEMP_DIR}/#{BOX_NAME}.box"
-FileUtils.chown ENV["SUDO_USER"], nil, "#{USER_TEMP_DIR}/#{BOX_NAME}.box"
-
-log_info "Adding box to Vagrant..."
-
 Dir.chdir(USER_TEMP_DIR) do
+  log_info "Adding box to Vagrant..."
+  FileUtils.mv "#{ROOT_TEMP_DIR}/macinbox.box", "#{BOX_NAME}.box"
+  FileUtils.chown ENV["SUDO_USER"], nil, "#{BOX_NAME}.box"
   run_command_as_user "vagrant", "box", "add", "#{BOX_NAME}.box", "--name", BOX_NAME
 end

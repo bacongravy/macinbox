@@ -97,7 +97,7 @@ log_info "Converting the image to VMDK format..."
 
 #####
 
-log_info "Saving the VMDK..."
+log_info "Moving the VMDK to the destination..."
 
 chown "$SUDO_USER" "${TEMP_DIR}/macinbox.vmdk"
 mv "${TEMP_DIR}/macinbox.vmdk" "${OUTPUT_PATH}"

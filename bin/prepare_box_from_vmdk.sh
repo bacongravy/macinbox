@@ -74,7 +74,7 @@ done
 
 #####
 
-log_info "Creating the Vagrant box..."
+log_info "Creating the box..."
 
 cat > "${TEMP_DIR}/${MACINBOX_BOX_NAME}.vmx" <<-EOF
   .encoding = "UTF-8"
@@ -164,7 +164,15 @@ EOF
 INPUT_VMDK_DIRNAME="$(cd $(dirname "${INPUT_VMDK}") 2> /dev/null && pwd -P)"
 INPUT_VMDK_BASENAME="$(basename "${INPUT_VMDK}")"
 
+#####
+
+log_info "Packaging the box..."
+
 tar czf "${TEMP_DIR}/${MACINBOX_BOX_NAME}.box" -C "${TEMP_DIR}" "./${MACINBOX_BOX_NAME}.vmx" "./metadata.json" "./Vagrantfile" -C "${INPUT_VMDK_DIRNAME}" "./${INPUT_VMDK_BASENAME}"
+
+#####
+
+log_info "Moving the box to the destination..."
 
 chown "$SUDO_USER" "${TEMP_DIR}/${MACINBOX_BOX_NAME}.box"
 mv "${TEMP_DIR}/${MACINBOX_BOX_NAME}.box" "${OUTPUT_PATH}"

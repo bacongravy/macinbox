@@ -65,13 +65,13 @@ INSTALL_INFO_PLIST="${INSTALLER_APP}/Contents/SharedSupport/InstallInfo.plist"
 SCRATCH_IMAGE="${TEMP_DIR}/scratch.sparseimage"
 SCRATCH_MOUNTPOINT="${TEMP_DIR}/scratch_mountpoint"
 
-SCRATCH_INSTALLER_CONFIGURATION_FILE="${SCRATCH_MOUNTPOINT}/private/var/db/.InstallerConfiguration"
-SCRATCH_SUDOERS_D="${SCRATCH_MOUNTPOINT}/private/etc/sudoers.d"
-SCRATCH_RC_INSTALLER_CLEANUP="${SCRATCH_MOUNTPOINT}/private/etc/rc.installer_cleanup"
-SCRATCH_RC_VAGRANT="${SCRATCH_MOUNTPOINT}/private/etc/rc.vagrant"
-SCRATCH_LAUNCHD_DISABLED_PLIST="${SCRATCH_MOUNTPOINT}/private/var/db/com.apple.xpc.launchd/disabled.plist"
 SCRATCH_VMHGFS_FILESYSTEM_RESOURCES="${SCRATCH_MOUNTPOINT}/Library/Filesystems/vmhgfs.fs/Contents/Resources"
 SCRATCH_SPC_KEXTPOLICY="${SCRATCH_MOUNTPOINT}/private/var/db/SystemPolicyConfiguration/KextPolicy"
+SCRATCH_INSTALLER_CONFIGURATION_FILE="${SCRATCH_MOUNTPOINT}/private/var/db/.InstallerConfiguration"
+SCRATCH_SUDOERS_D="${SCRATCH_MOUNTPOINT}/private/etc/sudoers.d"
+SCRATCH_LAUNCHD_DISABLED_PLIST="${SCRATCH_MOUNTPOINT}/private/var/db/com.apple.xpc.launchd/disabled.plist"
+SCRATCH_RC_INSTALLER_CLEANUP="${SCRATCH_MOUNTPOINT}/private/etc/rc.installer_cleanup"
+SCRATCH_RC_VAGRANT="${SCRATCH_MOUNTPOINT}/private/etc/rc.vagrant"
 
 VMWARE_TOOLS_IMAGE="${VMWARE_FUSION_APP}/Contents/Library/isoimages/darwin.iso"
 VMWARE_TOOLS_MOUNTPOINT="${TEMP_DIR}/vmware_tools_mountpoint"
@@ -145,6 +145,10 @@ ditto -x -z "${VMWARE_TOOLS_PACKAGE_DIR}/files.pkg/Payload" "${SCRATCH_MOUNTPOIN
 mkdir -p "${SCRATCH_VMHGFS_FILESYSTEM_RESOURCES}"
 ln -s "/Library/Application Support/VMware Tools/mount_vmhgfs" "${SCRATCH_VMHGFS_FILESYSTEM_RESOURCES}/"
 
+#####
+
+log_info "Setting SystemPolicyConfiguration KextPolicy to allow loading the VMware Tools kernel extensions..."
+
 sqlite3 "${SCRATCH_SPC_KEXTPOLICY}" <<-EOF
 	PRAGMA foreign_keys=OFF;
 	BEGIN TRANSACTION;
@@ -164,9 +168,7 @@ EOF
 
 #####
 
-log_info "Customizing installed OS with user account..."
-
-# Automate creation of user account on first boot
+log_info "Automating creation of user account on first boot..."
 
 cat > "${SCRATCH_INSTALLER_CONFIGURATION_FILE}" <<-EOF
 	<?xml version="1.0" encoding="UTF-8"?>
@@ -194,18 +196,23 @@ cat > "${SCRATCH_INSTALLER_CONFIGURATION_FILE}" <<-EOF
 	</plist>
 EOF
 
-# Enable password-less sudo
+#####
+
+log_info "Enabling password-less sudo..."
 
 cat > "${SCRATCH_SUDOERS_D}/${MACINBOX_SHORT_NAME}" <<-EOF
 	${MACINBOX_SHORT_NAME} ALL=(ALL) NOPASSWD: ALL
 EOF
+
 chmod 0440 "${SCRATCH_SUDOERS_D}/${MACINBOX_SHORT_NAME}"
 
-# Enable ssh
+#####
+
+log_info "Enabling sshd..."
 
 /usr/libexec/PlistBuddy -c 'Add :com.openssh.sshd bool False' "${SCRATCH_LAUNCHD_DISABLED_PLIST}"
 
-# Add extra vagrant customizations
+#####
 
 if [ "${MACINBOX_SHORT_NAME}" = "vagrant" ]; then
 
