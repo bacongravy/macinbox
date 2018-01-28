@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
+require 'pathname'
 require 'optparse'
 require 'fileutils'
 require 'shellwords'
 
-BIN_DIR = "#{File.expand_path(File.dirname(File.readlink(__FILE__)))}/bin"
+BIN_DIR = "#{File.dirname(Pathname.new(__FILE__).realpath)}/bin"
 
 def log_info(msg)
   STDERR.puts "\033[0;32m-- #{msg}\033[0m"
