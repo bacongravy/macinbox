@@ -66,6 +66,8 @@ Usage: macinbox [options]
     -p, --password PASSWORD          Password of the user (default: vagrant)
         --no-auto-login              Disable auto login
         --no-skip-mini-buddy         Show the mini buddy on first login
+        --no-hidpi                   Disable HiDPI resolutions
+        --no-fullscreen              Display the virtual machine GUI in a window
         --no-gui                     Disable the GUI
         --debug                      Enable debug mode
     -h, --help
@@ -76,6 +78,10 @@ Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to
 Here is an advanced example which creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
 
     $ macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
+
+## Retina Display and HiDPI Support
+
+By default macinbox will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the --no-hidpi option.
 
 ## Details
 
@@ -89,23 +95,12 @@ This script performs the following actions:
 1. Enables password-less sudo
 1. Enables sshd
 1. Adds an rc.installer_cleanup script which waits for the user account to be created on first boot and then installs the default insecure Vagrant SSH key in the user's home directory
+1. Enables HiDPI resolutions
 1. Converts the image into a VMDK
 1. Creates a Vagrant box for the VMware provider using the VMDK
 1. Adds the box to Vagrant
 
 This script is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant VMware box that boots macOS with a seamless user experience. However, this script is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
-
-## Retina Display and HiDPI Support
-
-If your host hardware includes a Retina display then you can configure the guest OS to display in HiDPI resolutions.
-
-First, run the following command from the host Vagrant environment to enable HiDPI resolutions on the guest and restart the virtual machine:
-
-    $ vagrant ssh -c "sudo defaults write /Library/Preferences/com.apple.windowserver.plist DisplayResolutionEnabled -bool true" && vagrant reload
-
-Next, either ensure the 'Use full resolution for Retina display' checkbox is checked in the Display settings of the virtual machine in VMware Fusion, or that the `gui.fitGuestUsingNativeDisplayResolution = "TRUE"` setting is set in the VMX file.
-
-Finally, open the Display pane of System Preferences on the guest, choose the 'Resolution: Scaled' radio button, and select the HiDPI resolution that appears in the table.
 
 ## Acknowledgements
 

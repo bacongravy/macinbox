@@ -13,6 +13,7 @@ MACINBOX_FULL_NAME=${MACINBOX_FULL_NAME:-$MACINBOX_SHORT_NAME}
 MACINBOX_PASSWORD=${MACINBOX_PASSWORD:-$MACINBOX_SHORT_NAME}
 MACINBOX_AUTO_LOGIN=${MACINBOX_AUTO_LOGIN:-true}
 MACINBOX_SKIP_MINI_BUDDY=${MACINBOX_SKIP_MINI_BUDDY:-true}
+MACINBOX_HIDPI=${MACINBOX_HIDPI:-true}
 
 #####
 
@@ -73,6 +74,7 @@ SCRATCH_SUDOERS_D="${SCRATCH_MOUNTPOINT}/private/etc/sudoers.d"
 SCRATCH_LAUNCHD_DISABLED_PLIST="${SCRATCH_MOUNTPOINT}/private/var/db/com.apple.xpc.launchd/disabled.plist"
 SCRATCH_RC_INSTALLER_CLEANUP="${SCRATCH_MOUNTPOINT}/private/etc/rc.installer_cleanup"
 SCRATCH_RC_VAGRANT="${SCRATCH_MOUNTPOINT}/private/etc/rc.vagrant"
+SCRATCH_WINDOWSERVER_PREFERENCES="${SCRATCH_MOUNTPOINT}/Library/Preferences/com.apple.windowserver.plist"
 
 VMWARE_TOOLS_IMAGE="${VMWARE_FUSION_APP}/Contents/Library/isoimages/darwin.iso"
 VMWARE_TOOLS_MOUNTPOINT="${TEMP_DIR}/vmware_tools_mountpoint"
@@ -251,6 +253,22 @@ if [ "${MACINBOX_SHORT_NAME}" = "vagrant" ]; then
 	EOF
 
 	chmod 0755 "${SCRATCH_RC_VAGRANT}"
+fi
+
+#####
+
+if [ "${MACINBOX_HIDPI}" = "true" ]; then
+	log_info "Enabling HiDPI resolutions..."
+	cat > "${SCRATCH_WINDOWSERVER_PREFERENCES}" <<-"EOF"
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+		<plist version="1.0">
+		<dict>
+			<key>DisplayResolutionEnabled</key>
+			<true/>
+		</dict>
+		</plist>
+	EOF
 fi
 
 #####

@@ -11,6 +11,8 @@ MACINBOX_BOX_NAME="${MACINBOX_BOX_NAME:-macinbox}"
 MACINBOX_CPU_COUNT="${MACINBOX_CPU_COUNT:-2}"
 MACINBOX_MEMORY_SIZE="${MACINBOX_MEMORY_SIZE:-2048}"
 MACINBOX_GUI="${MACINBOX_GUI:-true}"
+MACINBOX_FULLSCREEN="${MACINBOX_FULLSCREEN:-true}"
+MACINBOX_HIDPI="${MACINBOX_HIDPI:-true}"
 
 #####
 
@@ -139,9 +141,19 @@ cat > "${TEMP_DIR}/${MACINBOX_BOX_NAME}.vmx" <<-EOF
   extendedConfigFile = "${MACINBOX_BOX_NAME}.vmxf"
   floppy0.present = "FALSE"
   mks.enable3d = "FALSE"
-  gui.fitGuestUsingNativeDisplayResolution = "TRUE"
-  gui.viewModeAtPowerOn = "fullscreen"
 EOF
+
+if [ "${MACINBOX_FULLSCREEN}" = "true" ]; then
+	cat >> "${TEMP_DIR}/${MACINBOX_BOX_NAME}.vmx" <<-EOF
+		gui.viewModeAtPowerOn = "fullscreen"
+	EOF
+fi
+
+if [ "${MACINBOX_HIDPI}" = "true" ]; then
+	cat >> "${TEMP_DIR}/${MACINBOX_BOX_NAME}.vmx" <<-EOF
+		gui.fitGuestUsingNativeDisplayResolution = "TRUE"
+	EOF
+fi
 
 cat > "${TEMP_DIR}/metadata.json" <<-EOF
   {"provider": "vmware_fusion"}
