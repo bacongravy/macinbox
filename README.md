@@ -57,26 +57,24 @@ $ macinbox --help
 
 Usage: macinbox [options]
     -i, --installer PATH             Path to the installer app
-    -n, --name NAME                  Name of the box
-    -d, --disk SIZE                  Size of the disk (specified in GB)
-    -m, --memory SIZE                Size of the memory (specified in MB)
-    -c, --cpu COUNT                  Number of virtual cores
-    -s, --short NAME                 Short name of the user
-    -f, --full NAME                  Full name of the user
-    -p, --password PASSWORD          Password of the user
+    -n, --name NAME                  Name of the box (default: macinbox)
+    -d, --disk SIZE                  Size of the disk (specified in GB; default: 64)
+    -m, --memory SIZE                Size of the memory (specified in MB; default: 2048)
+    -c, --cpu COUNT                  Number of virtual cores (default: 2)
+    -s, --short NAME                 Short name of the user (default: vagrant)
+    -f, --full NAME                  Full name of the user (default: Vagrant)
+    -p, --password PASSWORD          Password of the user (default: vagrant)
         --no-auto-login              Disable auto login
         --no-gui                     Disable the GUI
         --debug                      Enable debug mode
     -h, --help
 ```
 
-You can specify the installer path location if it is not in the usual location. The name defaults to 'macinbox'. The disk size defaults to 64 GB. The memory size defaults to 2048 MB. The CPU count defaults to 2. The short name defaults to 'vagrant'. The full name defaults to 'Vagrant'. The password defaults to 'vagrant'. Auto-login is enabled by default. The VM GUI is enabled by default.
+Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to be preserved after the script exits rather than being cleaned up. WARNING!!! These intermediate files are very large and you can run out of disk space very quickly when using this option.
 
-Using the debug option preserves the intermediate files (disk image, VMDK, and box) instead of cleaning them up after adding the box.
+Here is an advanced example which creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
 
-Here is an advanced example which creates and adds a box named 'macinbox-xl-nogui' with a 128 GB disk, 8 GB of RAM, and 4 cores; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
-
-    $ macinbox -n macinbox-xl-nogui -d 128 -m 8192 -c 4 --no-auto-login --no-gui
+    $ macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
 
 ## Details
 
