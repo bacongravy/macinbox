@@ -1,0 +1,6 @@
+require "macinbox/actions"
+require "macinbox/cli"
+require "macinbox/collector"
+require "macinbox/logger"
+require "macinbox/task"
+require "macinbox/version"

@@ -28,10 +28,9 @@ The following software is required. Versions other than those mentioned may work
 
 ## Installation
 
-The `macinbox` script depends on the relative location of the scripts in the `bin/` directory of this repository. To install `macinbox`, first clone the repository, and then symlink it into a location in your `PATH`.  For example:
+Install the gem:
 
-    $ git clone https://github.com/bacongravy/macinbox
-    $ sudo ln -s "$(pwd)/macinbox/macinbox" /usr/local/bin/macinbox
+    $ sudo gem install macinbox
 
 ## Basic Usage
 
@@ -123,3 +122,13 @@ In researching prior art, I discovered Timothy Sutton's `osx-vm-templates` proje
 With the release of macOS 10.12.4, however, the prevailing techniques for customizing OS installs were hampered by a new requirement that all packages be signed by Apple. Since supporting macOS 10.13 High Sierra (and later) was going to require a major change to the scripts anyways, I decided to create 'macinbox' as a simpler, more streamlined approach to building macOS boxes. The previous scripts were more flexible, but 'macinbox' is faster and more reliable.
 
 I chose to support only VMware Fusion boxes because of the Vagrant VMware plugin support for linked clones and shared folders, and because in my experience I have found that macOS virtualizes better in VMware Fusion than the alternatives.
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/bacongravy/macinbox.
