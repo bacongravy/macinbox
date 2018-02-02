@@ -1,6 +1,8 @@
 require "macinbox/actions"
 require "macinbox/cli"
 require "macinbox/collector"
+require "macinbox/error"
 require "macinbox/logger"
 require "macinbox/task"
+require "macinbox/tty"
 require "macinbox/version"

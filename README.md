@@ -40,8 +40,8 @@ Run with `sudo` and no arguments, the `macinbox` script will create and add a Va
 
 Be patient; this takes a while. After the script completes you can create a new Vagrant environment with the box and start using it:
 
-    $ mkdir macinbox-test
-    $ cd macinbox-test
+    $ mkdir macinbox-machine
+    $ cd macinbox-machine
     $ vagrant init macinbox
     $ vagrant up
 
@@ -55,14 +55,15 @@ To see the advanced options, pass the `--help` option:
 $ macinbox --help
 
 Usage: macinbox [options]
-    -i, --installer PATH             Path to the installer app
-    -n, --name NAME                  Name of the box (default: macinbox)
-    -d, --disk SIZE                  Size of the disk (specified in GB; default: 64)
-    -m, --memory SIZE                Size of the memory (specified in MB; default: 2048)
+    -n, --name NAME                  Name of the box         (default: macinbox)
+    -d, --disk SIZE                  Size (GB) of the disk   (default: 64)
+    -m, --memory SIZE                Size (MB) of the memory (default: 2048)
     -c, --cpu COUNT                  Number of virtual cores (default: 2)
-    -s, --short NAME                 Short name of the user (default: vagrant)
-    -f, --full NAME                  Full name of the user (default: Vagrant)
-    -p, --password PASSWORD          Password of the user (default: vagrant)
+    -s, --short NAME                 Short name of the user  (default: vagrant)
+    -f, --full NAME                  Full name of the user   (default: Vagrant)
+    -p, --password PASSWORD          Password of the user    (default: vagrant)
+        --installer PATH             Path to the macOS installer app
+        --vmware PATH                Path to the VMware Fusion app
         --no-auto-login              Disable auto login
         --no-skip-mini-buddy         Show the mini buddy on first login
         --no-hidpi                   Disable HiDPI resolutions
@@ -126,6 +127,10 @@ I chose to support only VMware Fusion boxes because of the Vagrant VMware plugin
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To run `macinbox` directly from the root of the git workspace without installing the gem:
+
+    $ sudo bundle exec macinbox
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

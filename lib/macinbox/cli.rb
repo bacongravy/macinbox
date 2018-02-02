@@ -5,60 +5,70 @@ require 'fileutils'
 
 require "macinbox/actions"
 require "macinbox/collector"
+require 'macinbox/error'
 require 'macinbox/logger'
+require 'macinbox/tty'
 
 module Macinbox
 
   class CLI
 
-    def self.start(argv)
-      cli = self.new
-      cli.start(argv)
-      cli
+    def self.run!(argv)
+      begin
+        self.new.start(argv)
+      rescue Macinbox::Error => e
+        Logger.error "Error: " + e.to_s
+        exit 1
+      end
+      exit 0
     end
 
     def start(argv)
 
       parse_options(argv)
+
       check_for_sudo_root
 
       if not File.exists? @options[:installer_path]
-        Logger.bail "Installer app not found: #{installer_path}"
+        raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
       end
 
       if not File.exists? @options[:vmware_path]
-        Logger.bail "VMware Fusion app not found: #{installer_path}"
+        raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
       end
 
-      root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root ]
-      user_temp_dir = Task.backtick %W[ sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user ]
+      root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root_temp ]
+      user_temp_dir = Task.backtick %W[ sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user_temp ]
 
       collector = Collector.new
 
+      collector.add_temp_dir root_temp_dir
+      collector.add_temp_dir user_temp_dir
+
       collector.on_cleanup do
         if @options[:debug]
+          temp_dir_args = collector.temp_dirs.reverse.map { |o| o.shellescape }.join(" \\\n")
           Logger.error "WARNING: Temporary files were not removed. Run this command to remove them:"
-          Logger.error "sudo rm -rf #{Shellwords.escape(root_temp_dir)} #{Shellwords.escape(user_temp_dir)}"
+          Logger.error "sudo rm -rf #{temp_dir_args}"
         else
-          FileUtils.remove_dir(root_temp_dir)
-          FileUtils.remove_dir(user_temp_dir)
+          collector.remove_temp_dirs
         end
-        STDERR.print %x( tput cnorm )
+        STDERR.print TTY::CURSOR_NORMAL
       end
 
       ["TERM", "INT", "EXIT"].each do |signal|
         trap signal do
           trap signal, "SYSTEM_DEFAULT" unless signal == "EXIT"
           Process.waitall
-          Logger.info "Cleaning up..."
+          Logger.reset_depth
+          if @success
+            Logger.info "Cleaning up..."
+          else
+            STDERR.puts
+            Logger.error "Cleaning up..."
+          end
           collector.cleanup!
           Process.kill(signal, Process.pid) unless signal == "EXIT"
-        end
-      end
-
-      collector.on_cleanup do
-        if @temp_dir and File.exist? @temp_dir
-          FileUtils.rm_rf @temp_dir
         end
       end
 
@@ -81,22 +91,19 @@ module Macinbox
           Actions::CreateBoxFromVMDK.new(@options).run
         end
 
+        Logger.info "Installing box..." do
+          Actions::InstallBox.new(@options).run
+        end
+
       end
 
-      Dir.chdir(user_temp_dir) do
-        Logger.info "Adding box to Vagrant..."
-        FileUtils.mv "#{root_temp_dir}/macinbox.box", "#{@options[:box_name]}.box"
-        FileUtils.chown ENV["SUDO_USER"], nil, "#{@options[:box_name]}.box"
-        Task.run_as_sudo_user %W[ vagrant box add #{@options[:box_name]}.box --name #{@options[:box_name]} ] + [ @options[:debug] ? {} : { :out => File::NULL } ]
-      end
+      @success = true
+
     end
 
     def check_for_sudo_root
       if Process.uid != 0 or ENV["SUDO_USER"].nil?
-        STDERR.puts "Error: Script must be run as root with sudo."
-        STDERR.puts
-        STDERR.puts @option_parser
-        exit 1
+        raise Macinbox::Error.new("script must be run as root with sudo")
       end
     end
 
