@@ -44,6 +44,7 @@ module Macinbox
         o.on(      '--no-gui',             'Disable the GUI')                             { |v| @options[:gui] = v }
         o.on(      '--debug',              'Enable debug mode')                           { |v| @options[:debug] = v }
 
+        o.on('-v', '--version')                                                           { puts "macinbox #{Macinbox::VERSION}"; exit }
         o.on('-h', '--help')                                                              { puts o; exit }
 
         o.parse(argv)
