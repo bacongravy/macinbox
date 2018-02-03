@@ -2,6 +2,11 @@
 
 Puts macOS in a Vagrant VMware Fusion box.
 
+<p align=center>
+  <img src="https://raw.githubusercontent.com/bacongravy/macinbox/demo/demo.gif">
+  <i>Some sequences shortened. Original run time 14.5 minutes.</i>
+</p>
+
 ## System Requirements
 
 * macOS 10.13 High Sierra host operating system
