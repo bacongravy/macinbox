@@ -13,12 +13,12 @@ Puts macOS in a Vagrant VMware Fusion box.
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* VMware Fusion 10.1.1
+* VMware Fusion Pro 10.1.1
 * Vagrant 2.0.2
 * Vagrant VMware Fusion Plugin 5.0.4
 * macOS 10.13.3 High Sierra installer application
 
-[Get VMware Fusion](http://www.vmware.com/products/fusion.html)
+[Get VMware Fusion Pro](http://www.vmware.com/products/fusion.html)
 //
 [Get Vagrant](https://www.vagrantup.com/)
 //
@@ -34,15 +34,15 @@ Install the gem:
 
 ## Basic Usage
 
-Run with `sudo` and no arguments, the `macinbox` script will create and add a Vagrant VMware box named 'macinbox' using the installer app it finds in the default location:
+Run with `sudo` and no arguments, the `macinbox` tool will create and add a Vagrant VMware box named 'macinbox' which boots fullscreen to the desktop of the 'vagrant' user:
 
     $ sudo macinbox
 
-Please be patient, as this may take a while. (On a 2.5 GHz MacBookPro11,5 it takes about 11 minutes, 30 seconds.) After the script completes you can create a new Vagrant environment with the box and start using it:
+Please be patient, as this may take a while. (On a 2.5 GHz MacBookPro11,5 it takes about 11 minutes, 30 seconds.) After the tool completes you can create a new Vagrant environment with the box and start it:
 
     $ vagrant init macinbox && vagrant up
 
-A few moments after running this command you will see your virtual machine's display appear in a fullscreen window. A couple of minutes later, after the virtual machine completes booting, you will see the desktop of the `vagrant` user and can begin using the virtual machine.
+A few moments after running this command you will see your virtual machine's display appear fullscreen. (Press Command-Control-F to exit fullscreen mode.) After the virtual machine completes booting (approximately 1-2 minutes) you will see the desktop of the 'vagrant' user and can begin using the virtual machine.
 
 ## Advanced Usage
 
@@ -70,9 +70,9 @@ Usage: macinbox [options]
     -h, --help
 ```
 
-Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to be preserved after the script exits rather than being cleaned up. WARNING!!! These intermediate files are very large and you can run out of disk space very quickly when using this option.
+Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to be preserved after the tool exits rather than being cleaned up. WARNING!!! These intermediate files are very large and you can run out of disk space very quickly when using this option.
 
-Here is an advanced example which creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
+This advanced example creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
 
     $ macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
 
@@ -80,9 +80,9 @@ Here is an advanced example which creates and adds a box named 'macinbox-large-n
 
 By default macinbox will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the --no-hidpi option.
 
-## Details
+## Implementation Details
 
-This script performs the following actions:
+This tool performs the following actions:
 
 1. Creates a new blank disk image
 1. Installs macOS
@@ -97,7 +97,24 @@ This script performs the following actions:
 1. Creates a Vagrant box for the VMware provider using the VMDK
 1. Adds the box to Vagrant
 
-This script is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant VMware box that boots macOS with a seamless user experience. However, this script is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
+
+The box created by this tool includes a built-in Vagrantfile which disables the following default Vagrant behaviors:
+
+1. Checking Vagrant Cloud for new versions of the box
+1. Forwarding from port 2222 on the host to port 22 (ssh) on the guest
+1. Sharing the root folder of the Vagrant environment as '/vagrant' on the guest
+
+To re-enable the default ssh port forwarding you can add the following line to your environment's Vagrantfile:
+
+    config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh"
+
+To re-enable the default synced folder you can add the following line to your environment's Vagrantfile:
+
+    config.vm.synced_folder ".", "/vagrant"
+
+## Design Philosophy
+
+This tool is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant VMware box that boots macOS with a seamless user experience. However, this tool is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
 
 ## Acknowledgements
 
@@ -113,13 +130,13 @@ This project was inspired by the great work of others:
 
 ## Why?
 
-My preferred operating system is macOS, and ever since I started using Vagrant, I thought that it would be nice to have be able to boot a macOS box as easily as a Linux box. However, it wasn't until I was watching an episode of Mr. Robot that I was finally inspired to figure out how to make it happen. In the episode, Elliot is shown quickly booting what appeared to be a virtual machine running a Linux desktop environment in order to examine the contents of an untrusted CD-ROM, and I thought, "I want to be able to do that kind of thing with macOS!".
+This project draws inspiration from an episode of Mr. Robot. In the episode, Elliot is shown quickly booting what appeared to be a virtual machine running a fresh Linux desktop environment, in order to examine the contents of an untrusted CD-ROM. As I watched I thought, "I want to be able to do that kind of thing with macOS!". Surely I'm not the only person who has downloaded untrusted software from the internet, and wished that there was an easy way to evaluate it without putting my primary working environment at risk?
 
-In researching prior art, I discovered Timothy Sutton's `osx-vm-templates` project and realized that I would be able to use those scripts and packer templates to accomplish my goal. However, after using those the scripts and templates a few times and trying to customize them, I found that they didn't always work reliably for me. I began trying to understand how they worked so that I could make them more reliable and customizable, and created [vagrant-box-macos](https://github.com/bacongravy/vagrant-box-macos).
+This project is a direct successor to my [vagrant-box-macos](https://github.com/bacongravy/vagrant-box-macos) project, which itself was heavily inspired by Tim Sutton's [osx-vm-templates](https://github.com/timsutton/osx-vm-templates) project.
 
-With the release of macOS 10.12.4, however, the prevailing techniques for customizing OS installs were hampered by a new requirement that all packages be signed by Apple. Since supporting macOS 10.13 High Sierra (and later) was going to require a major change to the scripts anyways, I decided to create 'macinbox' as a simpler, more streamlined approach to building macOS boxes. The previous scripts were more flexible, but 'macinbox' is faster and more reliable.
+With the release of macOS 10.12.4 the prevailing techniques for customizing macOS installs were hampered by a new installer requirement that all packages be signed by Apple. After attempting various techniques to allow `vagrant-box-macos` to support macOS 10.13 High Sierra, I decided a different approach to box creation was needed, and `macinbox` was born.
 
-I chose to support only VMware Fusion boxes because of the Vagrant VMware plugin support for linked clones and shared folders, and because in my experience I have found that macOS virtualizes better in VMware Fusion than the alternatives.
+This project exclusively supports creating VMware Fusion boxes because of the Vagrant VMware plugin support for linked clones and Vagrant shared folders, and because, having tried the alternatives, I believe VMware Fusion provides the best macOS virtualization experience.
 
 ## Development
 
