@@ -14,9 +14,9 @@ Puts macOS in a Vagrant VMware Fusion box.
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
 * VMware Fusion 10.1.1
-* Vagrant 2.0.1
+* Vagrant 2.0.2
 * Vagrant VMware Fusion Plugin 5.0.4
-* macOS 10.13.3 High Sierra installer application (must be the same version as the host operating system)
+* macOS 10.13.3 High Sierra installer application
 
 [Get VMware Fusion](http://www.vmware.com/products/fusion.html)
 //
@@ -38,14 +38,11 @@ Run with `sudo` and no arguments, the `macinbox` script will create and add a Va
 
     $ sudo macinbox
 
-Be patient; this takes a while. After the script completes you can create a new Vagrant environment with the box and start using it:
+Please be patient, as this may take a while. (On a 2.5 GHz MacBookPro11,5 it takes about 11 minutes, 30 seconds.) After the script completes you can create a new Vagrant environment with the box and start using it:
 
-    $ mkdir macinbox-machine
-    $ cd macinbox-machine
-    $ vagrant init macinbox
-    $ vagrant up
+    $ vagrant init macinbox && vagrant up
 
-After a few moments you should see your virtual machine's display appear in a fullscreen window, first showing the OS boot progress screen, and then after a minute or so, the desktop of the `vagrant` user.
+A few moments after running this command you will see your virtual machine's display appear in a fullscreen window. A couple of minutes later, after the virtual machine completes booting, you will see the desktop of the `vagrant` user and can begin using the virtual machine.
 
 ## Advanced Usage
 
@@ -128,9 +125,7 @@ I chose to support only VMware Fusion boxes because of the Vagrant VMware plugin
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To run `macinbox` directly from the root of the git workspace without installing the gem:
-
-    $ sudo bundle exec macinbox
+To run `macinbox` directly from the root of the git workspace without installing the gem, run `sudo bundle exec macinbox`.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
