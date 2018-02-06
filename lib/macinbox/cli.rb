@@ -53,7 +53,8 @@ module Macinbox
         else
           collector.remove_temp_dirs
         end
-        STDERR.print TTY::CURSOR_NORMAL
+        STDERR.print TTY::Color::RESET
+        STDERR.print TTY::Cursor::NORMAL
       end
 
       ["TERM", "INT", "EXIT"].each do |signal|

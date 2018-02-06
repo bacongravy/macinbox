@@ -6,8 +6,6 @@ module Macinbox
 
   class Task
 
-    include TTY
-
     def self.run(cmd)
       system(*cmd) or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$?.to_i}")
     end
@@ -33,15 +31,15 @@ module Macinbox
     end
 
     def self.run_with_progress(activity, cmd, opts={})
-      STDERR.print CURSOR_INVISIBLE
-      STDERR.print CLEAR_LINE + GREEN + progress_bar(activity, 0.0) + BLACK
+      STDERR.print TTY::Cursor::INVISIBLE
+      STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, 0.0) + TTY::Color::RESET
       IO.popen cmd, opts do |pipe|
         pipe.each_line do |line|
           percent = yield line
-          STDERR.print CLEAR_LINE + GREEN + progress_bar(activity, percent) + BLACK if percent
+          STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, percent) + TTY::Color::RESET if percent
         end
       end
-      STDERR.puts CURSOR_NORMAL
+      STDERR.puts TTY::Cursor::NORMAL
     end
 
     def self.write_file_to_io_with_progress(source, destination)
@@ -50,21 +48,21 @@ module Macinbox
       bytes_written = 0
       total_size = File.size(source)
       last_percent_done = -1
-      STDERR.print CURSOR_INVISIBLE
-      STDERR.print CLEAR_LINE + GREEN + progress_bar(activity, 0.0) + BLACK
+      STDERR.print TTY::Cursor::INVISIBLE
+      STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, 0.0) + TTY::Color::RESET
       File.open(source) do |file|
         until eof
           begin
             bytes_written += destination.write(file.readpartial(1024*1024))
             percent_done = ((bytes_written.to_f / total_size.to_f) * 100).round(1)
             last_percent_done = percent_done
-            STDERR.print CLEAR_LINE + GREEN + progress_bar(activity, percent_done) + BLACK
+            STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, percent_done) + TTY::Color::RESET
           rescue EOFError
             eof = true
           end
         end
       end
-      STDERR.puts CURSOR_NORMAL
+      STDERR.puts TTY::Cursor::NORMAL
     end
 
     def self.backtick(cmd)
