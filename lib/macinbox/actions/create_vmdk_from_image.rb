@@ -55,6 +55,7 @@ module Macinbox
             Task.run %W[ #{rawdiskCreator} create  #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
+          %x( diskutil eject #{@device.shellescape} > /dev/null 2>&1 )
         end
 
         Logger.info "Moving the VMDK to the destination..." do
