@@ -114,9 +114,9 @@ module Macinbox
             bundle_short_version = Task.backtick %W[ defaults read #{"/Applications/VMware Fusion.app/Contents/Info.plist"} CFBundleShortVersionString ]
             darwin_iso_url = "http://softwareupdate.vmware.com/cds/vmw-desktop/fusion/#{bundle_short_version}/#{bundle_version}/packages/com.vmware.fusion.tools.darwin.zip.tar"
             Dir.chdir(@temp_dir) do
-              Task.run %W[ curl -O #{darwin_iso_url} ]
+              Task.run %W[ curl #{darwin_iso_url} -O ] + (@debug ? [] : %W[ -s -S ])
               Task.run %W[ tar -xf com.vmware.fusion.tools.darwin.zip.tar com.vmware.fusion.tools.darwin.zip ]
-              Task.run %W[ unzip com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
+              Task.run %W[ unzip ] + (@debug ? [] : %W[ -qq ]) + %W[ com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
             end
             tools_image = "#{@temp_dir}/payload/darwin.iso"
           end
