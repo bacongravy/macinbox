@@ -21,7 +21,7 @@ module Macinbox
           vagrant_boxes_dir = File.expand_path "~/.vagrant.d/boxes"
           raise Macinbox::Error.new("~/.vagrant.d/boxes not found") unless File.exist? vagrant_boxes_dir
           box_name = @box_name
-          box_version = Dir["#{vagrant_boxes_dir}/#{box_name}/*"].map { |o| File.basename(o).to_i }.sort.last.next rescue 0
+          box_version = Dir["#{vagrant_boxes_dir}/#{box_name}/*/*"].map { |o| o.split('/')[-2].to_i }.sort.last.next rescue 0
           box_provider = "vmware_fusion"
           target_box_dir = "#{vagrant_boxes_dir}/#{box_name}/#{box_version}/#{box_provider}"
           raise Macinbox::Error.new("box already exists") if File.exist? target_box_dir
