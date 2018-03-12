@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    macinbox (1.0.1)
+    macinbox (1.0.2)
 
 GEM
   remote: https://rubygems.org/
