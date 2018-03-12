@@ -30,16 +30,11 @@ module Macinbox
         Logger.info "Mounting the image..." do
 
           @collector.on_cleanup do
-            %x( hdiutil detach -quiet -force #{@mountpoint.shellescape} > /dev/null 2>&1 ) if @mountpoint
             %x( diskutil eject #{@device.shellescape} > /dev/null 2>&1 ) if @device
           end
 
-          @mountpoint = "#{@temp_dir}/image_mountpoint"
-
-          FileUtils.mkdir @mountpoint
-
           @device = %x(
-          	hdiutil attach #{@input_image.shellescape} -mountpoint #{@mountpoint.shellescape} -nobrowse -owners on |
+          	hdiutil attach #{@input_image.shellescape} -nomount |
           	grep _partition_scheme |
           	cut -f1 |
           	tr -d [:space:]
@@ -55,7 +50,8 @@ module Macinbox
             Task.run %W[ #{rawdiskCreator} create  #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
-          %x( diskutil eject #{@device.shellescape} > /dev/null 2>&1 )
+          Task.run %W[ diskutil eject #{@device.shellescape} ]
+          @device = nil
         end
 
         Logger.info "Moving the VMDK to the destination..." do
