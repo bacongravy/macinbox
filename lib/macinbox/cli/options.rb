@@ -1,5 +1,7 @@
 require 'optparse'
 
+require 'macinbox/version'
+
 module Macinbox
 
   class CLI
