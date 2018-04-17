@@ -12,8 +12,11 @@ module Macinbox
       :memory_size     => 2048,
       :cpu_count       => 2,
       :short_name      => "vagrant",
+      :box_format      => "vmware-fusion",
       :installer_path  => "/Applications/Install macOS High Sierra.app",
       :vmware_path     => "/Applications/VMware Fusion.app",
+      :parallels_path  => "/Applications/Parallels Desktop.app",
+      :vmware_tools    => true,
       :auto_login      => true,
       :skip_mini_buddy => true,
       :hidpi           => true,
@@ -36,8 +39,11 @@ module Macinbox
         o.on('-f', '--full NAME',          'Full name of the user   (default: Vagrant)')  { |v| @options[:full_name] = v }
         o.on('-p', '--password PASSWORD',  'Password of the user    (default: vagrant)')  { |v| @options[:password] = v }
 
+        o.on(      '--box-format FORMAT',  'Format of the box (default: vmware-fusion)')  { |v| @options[:box_format] = v }
+
         o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = v }
         o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = v }
+        o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = v }
 
         o.on(      '--no-auto-login',      'Disable auto login')                          { |v| @options[:auto_login] = v }
         o.on(      '--no-skip-mini-buddy', 'Show the mini buddy on first login')          { |v| @options[:skip_mini_buddy] = v }

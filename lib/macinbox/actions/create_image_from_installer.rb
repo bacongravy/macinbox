@@ -22,6 +22,7 @@ module Macinbox
         @full_name         = opts[:full_name]       or raise ArgumentError.new(":full_name not specified")
         @password          = opts[:password]        or raise ArgumentError.new(":password not specified")
 
+        @box_format        = opts[:box_format]
         @auto_login        = opts[:auto_login]
         @skip_mini_buddy   = opts[:skip_mini_buddy]
         @hidpi             = opts[:hidpi]
@@ -38,8 +39,11 @@ module Macinbox
         check_macos_versions
         create_scratch_image
         install_macos
-        install_vmware_tools
-        set_spc_kextpolicy
+        case @box_format
+        when "vmware-fusion"
+          install_vmware_tools
+          set_spc_kextpolicy
+        end
         automate_user_account_creation
         automate_vagrant_ssh_key_installation
         enable_passwordless_sudo

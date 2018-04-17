@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors       = ["David Kramer"]
   s.email         = ["bacongravy@icloud.com"]
 
-  s.summary       = "Puts macOS in a Vagrant VMware Fusion box"
+  s.summary       = "Puts macOS in a Vagrant box"
   s.homepage      = "https://github.com/bacongravy/macinbox"
   s.license       = "MIT"
 

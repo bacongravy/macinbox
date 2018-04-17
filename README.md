@@ -1,11 +1,13 @@
 # macinbox
 
-Puts macOS in a Vagrant VMware Fusion box.
+Puts macOS in a Vagrant box.
 
 <p align=center>
   <img src="https://raw.githubusercontent.com/bacongravy/macinbox/demo/demo.gif">
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
+
+Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats. Use of Parallels Desktop is recommended over VMware Fusion because of its superior support for macOS graphics.
 
 ## System Requirements
 
@@ -19,9 +21,13 @@ Puts macOS in a Vagrant VMware Fusion box.
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
 * VMware Fusion Pro 10.1.1
-* Vagrant 2.0.2
+* Vagrant 2.0.3
 * Vagrant VMware Fusion Plugin 5.0.4
 * macOS 10.13.3 High Sierra installer application
+
+To create a box in the 'parallels' format you must also have:
+
+* Parallels Desktop 13 for Mac Pro Edition 13.3.0
 
 [Get VMware Fusion Pro](http://www.vmware.com/products/fusion.html)
 //
@@ -30,6 +36,8 @@ The following software is required. Versions other than those mentioned may work
 [Get Vagrant VMware Fusion Plugin](https://www.vagrantup.com/vmware/)
 //
 [Get macOS 10.13 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
+//
+[Get Parallels Desktop](https://www.parallels.com/products/desktop/)
 
 ## Installation
 
@@ -64,6 +72,7 @@ Usage: macinbox [options]
     -s, --short NAME                 Short name of the user  (default: vagrant)
     -f, --full NAME                  Full name of the user   (default: Vagrant)
     -p, --password PASSWORD          Password of the user    (default: vagrant)
+        --box-format FORMAT          Format of the box (default: vmware-fusion)
         --installer PATH             Path to the macOS installer app
         --vmware PATH                Path to the VMware Fusion app
         --no-auto-login              Disable auto login
@@ -83,7 +92,11 @@ This advanced example creates and adds a box named 'macinbox-large-nogui' with 4
 
 ## Retina Display and HiDPI Support
 
-By default macinbox will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the --no-hidpi option.
+By default `macinbox` will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the `--no-hidpi` option.
+
+## Box Format Support
+
+By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the VMware Tools are not pre-installed. Note that creating a 'parallels' box requires both VMware Fusion and Parallels Desktop to be installed.
 
 ## Implementation Details
 
@@ -119,7 +132,7 @@ To re-enable the default synced folder you can add the following line to your en
 
 ## Design Philosophy
 
-This tool is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant VMware box that boots macOS with a seamless user experience. However, this tool is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
+This tool is intended to do everything that needs to be done to a fresh install of macOS before the first boot to turn it into a Vagrant box that boots macOS with a seamless user experience. However, this tool is also intended to the do the least amount of configuration possible. Nothing is done that could instead be deferred to a provisioning step in a Vagrantfile or packer template.
 
 ## Acknowledgements
 
@@ -141,15 +154,29 @@ This project is a direct successor to my [vagrant-box-macos](https://github.com/
 
 With the release of macOS 10.12.4 the prevailing techniques for customizing macOS installs were hampered by a new installer requirement that all packages be signed by Apple. After attempting various techniques to allow `vagrant-box-macos` to support macOS 10.13 High Sierra, I decided a different approach to box creation was needed, and `macinbox` was born.
 
-This project exclusively supports creating VMware Fusion boxes because of the Vagrant VMware plugin support for linked clones and Vagrant shared folders, and because, having tried the alternatives, I believe VMware Fusion provides the best macOS virtualization experience.
-
 ## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To run `macinbox` directly from the root of the git workspace without installing the gem, run `sudo bundle exec macinbox`.
 
-To install this gem onto your local machine, run `sudo bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `sudo bundle exec rake install`.
+
+You can also run `bin/console` for an interactive prompt that will allow you to experiment. For example:
+
+```
+include Macinbox::CLI
+include Macinbox::Actions
+opts = DEFAULT_OPTION_VALUES
+opts[:vmdk_path] = "macinbox.vmdk"
+opts[:hdd_path] = "macinbox.hdd"
+opts[:box_path] = "macinbox.box"
+opts[:collector] = Macinbox::Collector.new
+CreateVMDKFromImage.new(opts).run
+CreateImageFromInstaller.new(opts).run
+CreateHDDFromVMDK.new(opts).run
+CreateBoxFromHDD.new(opts).run
+```
+
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 

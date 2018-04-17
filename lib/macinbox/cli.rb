@@ -75,6 +75,7 @@ module Macinbox
 
       @options[:image_path] = "macinbox.dmg"
       @options[:vmdk_path] = "macinbox.vmdk"
+      @options[:hdd_path] = "macinbox.hdd"
       @options[:box_path] = "macinbox.box"
       @options[:collector] = collector
 
@@ -88,8 +89,24 @@ module Macinbox
           Actions::CreateVMDKFromImage.new(@options).run
         end
 
-        Logger.info "Creating box from VMDK..." do
-          Actions::CreateBoxFromVMDK.new(@options).run
+        case @options[:box_format]
+
+        when "vmware-fusion"
+
+          Logger.info "Creating box from VMDK..." do
+            Actions::CreateBoxFromVMDK.new(@options).run
+          end
+
+        when "parallels"
+
+          Logger.info "Creating HDD from VMDK..." do
+            Actions::CreateHDDFromVMDK.new(@options).run
+          end
+
+          Logger.info "Creating box from HDD..." do
+            Actions::CreateBoxFromHDD.new(@options).run
+          end
+
         end
 
         Logger.info "Installing box..." do
