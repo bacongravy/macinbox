@@ -50,7 +50,7 @@ module Macinbox
               config.vm.synced_folder ".", "/vagrant", disabled: true
               config.vm.provider "parallels" do |prl|
                 prl.update_guest_tools = true
-                prl.customize ["set", :id, "--startup-view", "#{@gui ? (@fullsceen ? "fullscreen" : "window") : "headless"}"]
+                prl.customize ["set", :id, "--startup-view", "#{@gui ? (@fullscreen ? "fullscreen" : "window") : "headless"}"]
               end
             end
           EOF
