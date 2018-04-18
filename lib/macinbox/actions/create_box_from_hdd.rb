@@ -64,6 +64,7 @@ module Macinbox
           end
 
           Task.run %W[ cp -r #{@input_hdd} #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
+          Task.run %W[ prl_disk_tool convert --merge --hdd #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
           Task.run %W[ prlctl set macinbox --device-add hdd --image #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
           Task.run %W[ prlctl set macinbox --high-resolution #{@hidpi ? "on" : "off"} ] + [task_opts]
           Task.run %W[ prlctl set macinbox --cpus #{@cpu_count} ] + [task_opts]
