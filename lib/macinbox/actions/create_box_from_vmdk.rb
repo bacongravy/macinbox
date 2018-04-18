@@ -39,7 +39,7 @@ module Macinbox
 
           FileUtils.mkdir @box_dir
 
-          File.open "#{@box_dir}/#{@box_name}.vmx", 'w' do |file|
+          File.open "#{@box_dir}/macinbox.vmx", 'w' do |file|
 
             file.write <<~EOF
               .encoding = "UTF-8"
@@ -48,7 +48,7 @@ module Macinbox
               numvcpus = "#{@cpu_count}"
               memsize = "#{@memory_size}"
               sata0.present = "TRUE"
-              sata0:0.fileName = "#{@box_name}.vmdk"
+              sata0:0.fileName = "macinbox.vmdk"
               sata0:0.present = "TRUE"
               sata0:1.autodetect = "TRUE"
               sata0:1.deviceType = "cdrom-raw"
@@ -89,7 +89,7 @@ module Macinbox
               firmware = "efi"
               displayName = "#{@box_name}"
               guestOS = "darwin17-64"
-              nvram = "#{@box_name}.nvram"
+              nvram = "macinbox.nvram"
               virtualHW.productCompatibility = "hosted"
               keyboardAndMouseProfile = "macProfile"
               powerType.powerOff = "soft"
@@ -101,7 +101,7 @@ module Macinbox
               sound.virtualDev = "hdaudio"
               sound.fileName = "-1"
               sound.present = "TRUE"
-              extendedConfigFile = "#{@box_name}.vmxf"
+              extendedConfigFile = "macinbox.vmxf"
               floppy0.present = "FALSE"
               mks.enable3d = "FALSE"
               gui.fitGuestUsingNativeDisplayResolution = "#{@hidpi ? "TRUE" : "FALSE"}"
@@ -127,7 +127,7 @@ module Macinbox
             end
           EOF
 
-          FileUtils.cp @input_vmdk, "#{@box_dir}/#{@box_name}.vmdk"
+          FileUtils.cp @input_vmdk, "#{@box_dir}/macinbox.vmdk"
 
         end
 
