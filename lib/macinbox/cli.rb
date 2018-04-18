@@ -91,7 +91,7 @@ module Macinbox
 
         case @options[:box_format]
 
-        when "vmware-fusion"
+        when "vmware_fusion"
 
           Logger.info "Creating box from VMDK..." do
             Actions::CreateBoxFromVMDK.new(@options).run

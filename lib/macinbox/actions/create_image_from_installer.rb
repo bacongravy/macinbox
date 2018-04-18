@@ -40,7 +40,7 @@ module Macinbox
         create_scratch_image
         install_macos
         case @box_format
-        when "vmware-fusion"
+        when "vmware_fusion"
           install_vmware_tools
           set_spc_kextpolicy
         end

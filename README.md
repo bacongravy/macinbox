@@ -72,7 +72,7 @@ Usage: macinbox [options]
     -s, --short NAME                 Short name of the user  (default: vagrant)
     -f, --full NAME                  Full name of the user   (default: Vagrant)
     -p, --password PASSWORD          Password of the user    (default: vagrant)
-        --box-format FORMAT          Format of the box (default: vmware-fusion)
+        --box-format FORMAT          Format of the box (default: vmware_fusion)
         --installer PATH             Path to the macOS installer app
         --vmware PATH                Path to the VMware Fusion app
         --no-auto-login              Disable auto login
