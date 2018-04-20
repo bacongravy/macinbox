@@ -156,6 +156,8 @@ With the release of macOS 10.12.4 the prevailing techniques for customizing macO
 
 ## Development
 
+Start by running `sudo gem install bundler` and `bundle install`.
+
 To run `macinbox` directly from the root of the git workspace without installing the gem, run `sudo bundle exec macinbox`.
 
 To install this gem onto your local machine, run `sudo bundle exec rake install`.
@@ -163,15 +165,19 @@ To install this gem onto your local machine, run `sudo bundle exec rake install`
 You can also run `bin/console` for an interactive prompt that will allow you to experiment. For example:
 
 ```
-include Macinbox::CLI
-include Macinbox::Actions
-opts = DEFAULT_OPTION_VALUES
+opts = Macinbox::CLI::DEFAULT_OPTION_VALUES
+opts[:collector] = Macinbox::Collector.new
+opts[:full_name] = "Vagrant"
+opts[:password] = "vagrant"
+opts[:box_format] = "parallels"
+opts[:image_path] = "macinbox.dmg"
 opts[:vmdk_path] = "macinbox.vmdk"
 opts[:hdd_path] = "macinbox.hdd"
 opts[:box_path] = "macinbox.box"
-opts[:collector] = Macinbox::Collector.new
-CreateVMDKFromImage.new(opts).run
+opts[:debug] = true
+include Macinbox::Actions
 CreateImageFromInstaller.new(opts).run
+CreateVMDKFromImage.new(opts).run
 CreateHDDFromVMDK.new(opts).run
 CreateBoxFromHDD.new(opts).run
 ```
