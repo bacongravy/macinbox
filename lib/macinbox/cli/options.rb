@@ -7,12 +7,12 @@ module Macinbox
   class CLI
 
     DEFAULT_OPTION_VALUES = {
+      :box_format      => "vmware_fusion",
       :box_name        => "macinbox",
       :disk_size       => 64,
       :memory_size     => 2048,
       :cpu_count       => 2,
       :short_name      => "vagrant",
-      :box_format      => "vmware_fusion",
       :installer_path  => "/Applications/Install macOS High Sierra.app",
       :vmware_path     => "/Applications/VMware Fusion.app",
       :parallels_path  => "/Applications/Parallels Desktop.app",
@@ -31,6 +31,9 @@ module Macinbox
 
       @option_parser = OptionParser.new do |o|
 
+        o.separator ''
+        o.on(      '--box-format FORMAT',  'Format of the box (default: vmware_fusion)')  { |v| @options[:box_format] = v }
+        o.separator ''
         o.on('-n', '--name NAME',          'Name of the box         (default: macinbox)') { |v| @options[:box_name] = v }
         o.on('-d', '--disk SIZE',          'Size (GB) of the disk   (default: 64)')       { |v| @options[:disk_size] = v }
         o.on('-m', '--memory SIZE',        'Size (MB) of the memory (default: 2048)')     { |v| @options[:memory_size] = v }
@@ -38,20 +41,19 @@ module Macinbox
         o.on('-s', '--short NAME',         'Short name of the user  (default: vagrant)')  { |v| @options[:short_name] = v }
         o.on('-f', '--full NAME',          'Full name of the user   (default: Vagrant)')  { |v| @options[:full_name] = v }
         o.on('-p', '--password PASSWORD',  'Password of the user    (default: vagrant)')  { |v| @options[:password] = v }
-
-        o.on(      '--box-format FORMAT',  'Format of the box (default: vmware_fusion)')  { |v| @options[:box_format] = v }
-
+        o.separator ''
         o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = v }
         o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = v }
         o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = v }
-
+        o.separator ''
         o.on(      '--no-auto-login',      'Disable auto login')                          { |v| @options[:auto_login] = v }
         o.on(      '--no-skip-mini-buddy', 'Show the mini buddy on first login')          { |v| @options[:skip_mini_buddy] = v }
         o.on(      '--no-hidpi',           'Disable HiDPI resolutions')                   { |v| @options[:hidpi] = v }
         o.on(      '--no-fullscreen',      'Display the virtual machine GUI in a window') { |v| @options[:fullsceen] = v }
         o.on(      '--no-gui',             'Disable the GUI')                             { |v| @options[:gui] = v }
+        o.separator ''
         o.on(      '--debug',              'Enable debug mode')                           { |v| @options[:debug] = v }
-
+        o.separator ''
         o.on('-v', '--version')                                                           { puts "macinbox #{Macinbox::VERSION}"; exit }
         o.on('-h', '--help')                                                              { puts o; exit }
 

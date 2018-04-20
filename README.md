@@ -7,7 +7,7 @@ Puts macOS in a Vagrant box.
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
 
-Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats. Use of Parallels Desktop is recommended over VMware Fusion because of its superior support for macOS graphics.
+Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 
 ## System Requirements
 
@@ -20,24 +20,31 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats. Us
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* VMware Fusion Pro 10.1.1
-* Vagrant 2.0.3
-* Vagrant VMware Fusion Plugin 5.0.4
 * macOS 10.13.3 High Sierra installer application
+* Vagrant 2.0.3
 
-To create a box in the 'parallels' format you must also have:
+To create and boot a box in the 'vmware_fusion' format you must also have:
 
+* VMware Fusion Pro 10.1.1
+* Vagrant VMware Fusion Provider 5.0.4
+
+To create and boot a box in the 'parallels' format you must also have:
+
+* VMware Fusion Pro 10.1.1
 * Parallels Desktop 13 for Mac Pro Edition 13.3.0
+* Vagrant Parallels Provider 1.7.8
 
-[Get VMware Fusion Pro](http://www.vmware.com/products/fusion.html)
+[Get macOS 10.13 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
 //
 [Get Vagrant](https://www.vagrantup.com/)
 //
-[Get Vagrant VMware Fusion Plugin](https://www.vagrantup.com/vmware/)
+[Get VMware Fusion](http://www.vmware.com/products/fusion.html)
 //
-[Get macOS 10.13 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
+[Get Vagrant VMware Fusion Provider](https://www.vagrantup.com/vmware/)
 //
 [Get Parallels Desktop](https://www.parallels.com/products/desktop/)
+//
+[Get Vagrant Parallels Provider](https://parallels.github.io/vagrant-parallels/)
 
 ## Installation
 
@@ -57,14 +64,19 @@ Please be patient, as this may take a while. (On a 2.5 GHz MacBookPro11,5 it tak
 
 A few moments after running this command you will see your virtual machine's display appear fullscreen. (Press Command-Control-F to exit fullscreen mode.) After the virtual machine completes booting (approximately 1-2 minutes) you will see the desktop of the 'vagrant' user and can begin using the virtual machine.
 
+To create a Parallels Desktop box, pass the `--box-format` option:
+
+    $ sudo macinbox --box-format parallels
+
 ## Advanced Usage
 
 To see the advanced options, pass the `--help` option:
 
 ```
-$ macinbox --help
-
 Usage: macinbox [options]
+
+        --box-format FORMAT          Format of the box (default: vmware_fusion)
+
     -n, --name NAME                  Name of the box         (default: macinbox)
     -d, --disk SIZE                  Size (GB) of the disk   (default: 64)
     -m, --memory SIZE                Size (MB) of the memory (default: 2048)
@@ -72,15 +84,20 @@ Usage: macinbox [options]
     -s, --short NAME                 Short name of the user  (default: vagrant)
     -f, --full NAME                  Full name of the user   (default: Vagrant)
     -p, --password PASSWORD          Password of the user    (default: vagrant)
-        --box-format FORMAT          Format of the box (default: vmware_fusion)
+
         --installer PATH             Path to the macOS installer app
         --vmware PATH                Path to the VMware Fusion app
+        --parallels PATH             Path to the Parallels Desktop app
+
         --no-auto-login              Disable auto login
         --no-skip-mini-buddy         Show the mini buddy on first login
         --no-hidpi                   Disable HiDPI resolutions
         --no-fullscreen              Display the virtual machine GUI in a window
         --no-gui                     Disable the GUI
+
         --debug                      Enable debug mode
+
+    -v, --version
     -h, --help
 ```
 
@@ -96,7 +113,9 @@ By default `macinbox` will configure the guest OS to have HiDPI resolutions enab
 
 ## Box Format Support
 
-By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the VMware Tools are not pre-installed. Note that creating a 'parallels' box requires both VMware Fusion and Parallels Desktop to be installed.
+By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+
+**Note:** Creating a 'parallels' box requires **both** VMware Fusion and Parallels Desktop to be installed.
 
 ## Implementation Details
 
