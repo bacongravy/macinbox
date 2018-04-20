@@ -66,7 +66,7 @@ module Macinbox
       def check_macos_versions
         Logger.info "Checking macOS versions..." do
           @install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
-        	raise Macinbox::Error.new("InstallInfo.plist not found in installer app bundle") unless File.exist? @install_info_plist
+          raise Macinbox::Error.new("InstallInfo.plist not found in installer app bundle") unless File.exist? @install_info_plist
 
           installer_os_version = Task.backtick %W[ /usr/libexec/PlistBuddy -c #{'Print :System\ Image\ Info:version'} #{@install_info_plist} ]
           installer_os_version_components = installer_os_version.split(".") rescue [0, 0, 0]
@@ -81,7 +81,7 @@ module Macinbox
           Logger.info "Host macOS version detected: #{host_os_version}" if @debug
 
           if installer_os_version_major != host_os_version_major || installer_os_version_minor != host_os_version_minor
-          	raise Macinbox::Error.new("host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match")
+            raise Macinbox::Error.new("host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match")
           end
         end
       end
@@ -174,16 +174,16 @@ module Macinbox
           scratch_spc_kextpolicy = "#{@scratch_mountpoint}/private/var/db/SystemPolicyConfiguration/KextPolicy"
           Task.run_with_input ["sqlite3", scratch_spc_kextpolicy] do |pipe|
             pipe.write <<~EOF
-            	PRAGMA foreign_keys=OFF;
-            	BEGIN TRANSACTION;
-            	CREATE TABLE kext_load_history_v3 ( path TEXT PRIMARY KEY, team_id TEXT, bundle_id TEXT, boot_uuid TEXT, created_at TEXT, last_seen TEXT, flags INTEGER );
-            	CREATE TABLE kext_policy ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, developer_name TEXT, flags INTEGER, PRIMARY KEY (team_id, bundle_id) );
-            	INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.VMwareGfx',1,'VMware, Inc.',1);
-            	INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmmemctl',1,'VMware, Inc.',1);
-            	INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmhgfs',1,'VMware, Inc.',1);
-            	CREATE TABLE kext_policy_mdm ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, payload_uuid TEXT, PRIMARY KEY (team_id, bundle_id) );
-            	CREATE TABLE settings ( name TEXT, value TEXT, PRIMARY KEY (name) );
-            	COMMIT;
+              PRAGMA foreign_keys=OFF;
+              BEGIN TRANSACTION;
+              CREATE TABLE kext_load_history_v3 ( path TEXT PRIMARY KEY, team_id TEXT, bundle_id TEXT, boot_uuid TEXT, created_at TEXT, last_seen TEXT, flags INTEGER );
+              CREATE TABLE kext_policy ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, developer_name TEXT, flags INTEGER, PRIMARY KEY (team_id, bundle_id) );
+              INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.VMwareGfx',1,'VMware, Inc.',1);
+              INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmmemctl',1,'VMware, Inc.',1);
+              INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmhgfs',1,'VMware, Inc.',1);
+              CREATE TABLE kext_policy_mdm ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, payload_uuid TEXT, PRIMARY KEY (team_id, bundle_id) );
+              CREATE TABLE settings ( name TEXT, value TEXT, PRIMARY KEY (name) );
+              COMMIT;
             EOF
           end
         end
@@ -251,51 +251,51 @@ module Macinbox
         Logger.info "Configuring the primary user account..." do
           scratch_installer_configuration_file = "#{@scratch_mountpoint}/private/var/db/.InstallerConfiguration"
           File.write scratch_installer_configuration_file, <<~EOF
-          	<?xml version="1.0" encoding="UTF-8"?>
-          	<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          	<plist version="1.0">
-          	<dict>
-          		<key>Users</key>
-          		<array>
-          			<dict>
-          				<key>admin</key>
-          				<true/>
-          				<key>autologin</key>
-          				<#{@auto_login ? true : false}/>
-          				<key>fullName</key>
-          				<string>#{@full_name}</string>
-          				<key>shortName</key>
-          				<string>#{@short_name}</string>
-          				<key>password</key>
-          				<string>#{@password}</string>
-          				<key>skipMiniBuddy</key>
-          				<#{@skip_mini_buddy ? true : false}/>
-          			</dict>
-          		</array>
-          	</dict>
-          	</plist>
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+              <key>Users</key>
+              <array>
+                <dict>
+                  <key>admin</key>
+                  <true/>
+                  <key>autologin</key>
+                  <#{@auto_login ? true : false}/>
+                  <key>fullName</key>
+                  <string>#{@full_name}</string>
+                  <key>shortName</key>
+                  <string>#{@short_name}</string>
+                  <key>password</key>
+                  <string>#{@password}</string>
+                  <key>skipMiniBuddy</key>
+                  <#{@skip_mini_buddy ? true : false}/>
+                </dict>
+              </array>
+            </dict>
+            </plist>
           EOF
         end
       end
 
       def automate_vagrant_ssh_key_installation
         if @short_name == "vagrant"
-        	Logger.info "Installing the default insecure vagrant ssh key..." do
+          Logger.info "Installing the default insecure vagrant ssh key..." do
             contents = <<~EOF
-          		#!/bin/sh
-          		rm /etc/rc.vagrant
-          		while [ ! -e /Users/vagrant ]; do
-          			sleep 1
-          		done
-          		if [ ! -e /Users/vagrant/.ssh ]; then
-          			mkdir /Users/vagrant/.ssh
-          			chmod 0700 /Users/vagrant/.ssh
-          			chown `stat -f %u /Users/vagrant` /Users/vagrant/.ssh
-          		fi
-          		echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" >> /Users/vagrant/.ssh/authorized_keys
-          		chmod 0600 /Users/vagrant/.ssh/authorized_keys
-          		chown `stat -f %u /Users/vagrant` /Users/vagrant/.ssh/authorized_keys
-          	EOF
+              #!/bin/sh
+              rm /etc/rc.vagrant
+              while [ ! -e /Users/vagrant ]; do
+                sleep 1
+              done
+              if [ ! -e /Users/vagrant/.ssh ]; then
+                mkdir /Users/vagrant/.ssh
+                chmod 0700 /Users/vagrant/.ssh
+                chown `stat -f %u /Users/vagrant` /Users/vagrant/.ssh
+              fi
+              echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" >> /Users/vagrant/.ssh/authorized_keys
+              chmod 0600 /Users/vagrant/.ssh/authorized_keys
+              chown `stat -f %u /Users/vagrant` /Users/vagrant/.ssh/authorized_keys
+            EOF
             File.write @scratch_rc_vagrant, contents, mode: 'a'
           end
         end
@@ -305,7 +305,7 @@ module Macinbox
         Logger.info "Enabling password-less sudo..." do
           scratch_sudoers_d_user_rule_file = "#{@scratch_mountpoint}/private/etc/sudoers.d/#{@short_name}"
           File.write scratch_sudoers_d_user_rule_file, <<~EOF
-          	#{@short_name} ALL=(ALL) NOPASSWD: ALL
+            #{@short_name} ALL=(ALL) NOPASSWD: ALL
           EOF
           FileUtils.chmod 0440, scratch_sudoers_d_user_rule_file
         end
@@ -322,18 +322,18 @@ module Macinbox
 
       def enable_hidpi
         if @hidpi
-        	Logger.info "Enabling HiDPI resolutions..." do
+          Logger.info "Enabling HiDPI resolutions..." do
             scratch_windowserver_preferences = "#{@scratch_mountpoint}/Library/Preferences/com.apple.windowserver.plist"
-          	File.write scratch_windowserver_preferences, <<~EOF
-          		<?xml version="1.0" encoding="UTF-8"?>
-          		<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          		<plist version="1.0">
-          		<dict>
-          			<key>DisplayResolutionEnabled</key>
-          			<true/>
-          		</dict>
-          		</plist>
-          	EOF
+            File.write scratch_windowserver_preferences, <<~EOF
+              <?xml version="1.0" encoding="UTF-8"?>
+              <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+              <plist version="1.0">
+              <dict>
+                <key>DisplayResolutionEnabled</key>
+                <true/>
+              </dict>
+              </plist>
+            EOF
           end
         end
       end

@@ -34,10 +34,10 @@ module Macinbox
           end
 
           @device = %x(
-          	hdiutil attach #{@input_image.shellescape} -nomount |
-          	grep _partition_scheme |
-          	cut -f1 |
-          	tr -d [:space:]
+            hdiutil attach #{@input_image.shellescape} -nomount |
+            grep _partition_scheme |
+            cut -f1 |
+            tr -d [:space:]
           )
 
           raise Macinbox::Error.new("failed to mount the image") unless File.exist? @device
@@ -58,7 +58,7 @@ module Macinbox
           FileUtils.chown ENV["SUDO_USER"], nil, "#{@temp_dir}/macinbox.vmdk"
           FileUtils.mv "#{@temp_dir}/macinbox.vmdk", @output_path
         end
-        
+
       end
 
     end
