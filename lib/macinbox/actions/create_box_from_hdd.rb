@@ -49,7 +49,6 @@ module Macinbox
               config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
               config.vm.synced_folder ".", "/vagrant", disabled: true
               config.vm.provider "parallels" do |prl|
-                prl.update_guest_tools = true
                 prl.customize ["set", :id, "--startup-view", "#{@gui ? (@fullscreen ? "fullscreen" : "window") : "headless"}"]
               end
             end

@@ -15,7 +15,8 @@ module Macinbox
       def initialize(opts)
         @installer_app     = opts[:installer_path]  or raise ArgumentError.new(":installer_path not specified")
         @output_path       = opts[:image_path]      or raise ArgumentError.new(":image_path not specified")
-        @vmware_fusion_app = opts[:vmware_path]     or raise ArgumentError.new(":vmware_path not specified")
+        @vmware_fusion_app = opts[:vmware_path]
+        @parallels_app     = opts[:parallels_path]
 
         @disk_size         = opts[:disk_size]       or raise ArgumentError.new(":disk_size not specified")
         @short_name        = opts[:short_name]      or raise ArgumentError.new(":short_name not specified")
@@ -30,8 +31,10 @@ module Macinbox
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
         @debug             = opts[:debug]
 
-        raise Macinbox::Error.new("installer app not found")     unless File.exist? @installer_app
-        raise Macinbox::Error.new("VMware Fusion app not found") unless File.exist? @vmware_fusion_app
+        raise Macinbox::Error.new("Installer app not found") unless File.exist? @installer_app
+
+        raise ArgumentError.new(":vmware_path not specified") if @box_format == "vmware_fusion" && !opts[:vmware_path]
+        raise ArgumentError.new(":parallels_app not specified") if @box_format == "parallels" && !opts[:parallels_app]
       end
 
       def run
@@ -39,10 +42,13 @@ module Macinbox
         check_macos_versions
         create_scratch_image
         install_macos
+        create_rc_vagrant
         case @box_format
         when "vmware_fusion"
           install_vmware_tools
           set_spc_kextpolicy
+        when "parallels"
+          install_parallels_tools
         end
         automate_user_account_creation
         automate_vagrant_ssh_key_installation
@@ -103,6 +109,23 @@ module Macinbox
             /^installer:%(.*)$/.match(line)[1].to_f rescue nil
           end
         end
+      end
+
+      def create_rc_vagrant
+        scratch_rc_installer_cleanup = "#{@scratch_mountpoint}/private/etc/rc.installer_cleanup"
+        @scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
+        File.write scratch_rc_installer_cleanup, <<~EOF
+          #!/bin/sh
+          rm /etc/rc.installer_cleanup
+          /etc/rc.vagrant &
+          exit 0
+        EOF
+        FileUtils.chmod 0755, scratch_rc_installer_cleanup
+        File.write @scratch_rc_vagrant, <<~EOF
+          #!/bin/sh
+          rm /etc/rc.vagrant
+        EOF
+        FileUtils.chmod 0755, @scratch_rc_vagrant
       end
 
       def install_vmware_tools
@@ -166,6 +189,64 @@ module Macinbox
         end
       end
 
+      def install_parallels_tools
+
+        @collector.on_cleanup do
+          %x( hdiutil detach -quiet -force #{@tools_mountpoint.shellescape} > /dev/null 2>&1 ) if @tools_mountpoint
+        end
+
+        Logger.info "Installing the Parallels Tools..." do
+
+          @tools_mountpoint = "#{@temp_dir}/tools_mountpoint"
+          FileUtils.mkdir @tools_mountpoint
+
+          quiet_flag = @debug ? [] : %W[ -quiet ]
+
+          tools_image = "#{@parallels_app}/Contents/Resources/Tools/prl-tools-mac.iso"
+
+          Task.run %W[ hdiutil attach #{tools_image} -mountpoint #{@tools_mountpoint} -nobrowse ] + quiet_flag
+
+          tools_packages_dir = "#{@tools_mountpoint}/Install.app/Contents/Resources/Install.mpkg/Contents/Packages"
+
+          tools_packages = [
+            "Parallels Tools Audio 10.9.pkg",
+            "Parallels Tools Coherence.pkg",
+            "Parallels Tools CopyPaste.pkg",
+            "Parallels Tools DragDrop.pkg",
+            "Parallels Tools HostTime.pkg",
+            "Parallels Tools InstallationAgent.pkg",
+            "Parallels Tools Network 10.9.pkg",
+            "Parallels Tools SharedFolders.pkg",
+            "Parallels Tools TimeSync.pkg",
+            "Parallels Tools ToolGate 10.9.pkg",
+            "Parallels Tools Utilities.pkg",
+            "Parallels Tools Video 10.9.pkg"
+          ]
+
+          tools_expanded_packages_dir = "#{@temp_dir}/tools_packages"
+          FileUtils.mkdir tools_expanded_packages_dir
+
+          tools_packages.each do |package|
+            Task.run %W[ pkgutil --expand #{tools_packages_dir}/#{package} #{tools_expanded_packages_dir}/#{package} ]
+            Task.run %W[ ditto -x -z #{tools_expanded_packages_dir}/#{package}/Payload #{@scratch_mountpoint} ]
+          end
+
+          prl_nettool_source = "/Library/Parallels Guest Tools/prl_nettool"
+          prl_nettool_target = "#{@scratch_mountpoint}/usr/local/bin/prl_nettool"
+
+          FileUtils.mkdir_p File.dirname(prl_nettool_target)
+          FileUtils.ln_s prl_nettool_source, prl_nettool_target
+
+          prl_fsd_plist = "#{@scratch_mountpoint}/Library/LaunchDaemons/com.parallels.vm.prl_fsd.plist"
+          Task.run %W[ sed -i #{''} s/PARALLELS_ADDITIONAL_ARGS/--share/ #{prl_fsd_plist} ]
+
+          contents = "/Library/Parallels\ Guest\ Tools/dynres --enable-retina\n"
+          File.write @scratch_rc_vagrant, contents, mode: 'a'
+
+        end
+
+      end
+
       def automate_user_account_creation
         Logger.info "Configuring the primary user account..." do
           scratch_installer_configuration_file = "#{@scratch_mountpoint}/private/var/db/.InstallerConfiguration"
@@ -200,16 +281,7 @@ module Macinbox
       def automate_vagrant_ssh_key_installation
         if @short_name == "vagrant"
         	Logger.info "Installing the default insecure vagrant ssh key..." do
-            scratch_rc_installer_cleanup = "#{@scratch_mountpoint}/private/etc/rc.installer_cleanup"
-            scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
-            File.write scratch_rc_installer_cleanup, <<~EOF
-          		#!/bin/sh
-          		rm /etc/rc.installer_cleanup
-          		/etc/rc.vagrant &
-          		exit 0
-          	EOF
-          	FileUtils.chmod 0755, scratch_rc_installer_cleanup
-          	File.write scratch_rc_vagrant, <<~EOF
+            contents = <<~EOF
           		#!/bin/sh
           		rm /etc/rc.vagrant
           		while [ ! -e /Users/vagrant ]; do
@@ -224,7 +296,7 @@ module Macinbox
           		chmod 0600 /Users/vagrant/.ssh/authorized_keys
           		chown `stat -f %u /Users/vagrant` /Users/vagrant/.ssh/authorized_keys
           	EOF
-          	FileUtils.chmod 0755, scratch_rc_vagrant
+            File.write @scratch_rc_vagrant, contents, mode: 'a'
           end
         end
       end

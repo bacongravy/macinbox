@@ -33,8 +33,12 @@ module Macinbox
         raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
       end
 
-      if not File.exists? @options[:vmware_path]
+      if @options[:box_format] == "vmware_fusion" && !File.exists?(@options[:vmware_path])
         raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
+      end
+
+      if @options[:box_format] == "parallels" && !File.exists?(@options[:parallels_path])
+        raise Macinbox::Error.new("Parallels Desktop app not found: #{@options[:parallels_path]}")
       end
 
       root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root_temp ]
