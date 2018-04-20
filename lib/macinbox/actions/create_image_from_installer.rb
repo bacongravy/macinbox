@@ -34,7 +34,7 @@ module Macinbox
         raise Macinbox::Error.new("Installer app not found") unless File.exist? @installer_app
 
         raise ArgumentError.new(":vmware_path not specified") if @box_format == "vmware_fusion" && !opts[:vmware_path]
-        raise ArgumentError.new(":parallels_app not specified") if @box_format == "parallels" && !opts[:parallels_app]
+        raise ArgumentError.new(":parallels_path not specified") if @box_format == "parallels" && !opts[:parallels_path]
       end
 
       def run
