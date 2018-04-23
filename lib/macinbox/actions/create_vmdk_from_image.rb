@@ -47,7 +47,7 @@ module Macinbox
           rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
           vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
           Dir.chdir(@temp_dir) do
-            Task.run %W[ #{rawdiskCreator} create  #{@device} fullDevice rawdisk lsilogic ]
+            Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
           Task.run %W[ diskutil eject #{@device.shellescape} ]
