@@ -20,30 +20,18 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* macOS 10.13.3 High Sierra installer application
-* Vagrant 2.0.3
+* [macOS 10.13.4 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
+* [Vagrant 2.0.3](https://www.vagrantup.com/)
 
 To create and boot a box in the 'vmware_fusion' format you must also have:
 
-* VMware Fusion Pro 10.1.1
-* Vagrant VMware Fusion Provider 5.0.4
+* [VMware Fusion Pro 10.1.1](http://www.vmware.com/products/fusion.html)
+* [Vagrant VMware Fusion Provider 5.0.4](https://www.vagrantup.com/vmware/)
 
 To create and boot a box in the 'parallels' format you must also have:
 
-* Parallels Desktop 13 for Mac Pro Edition 13.3.0
-* Vagrant Parallels Provider 1.7.8
-
-[Get macOS 10.13 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
-//
-[Get Vagrant](https://www.vagrantup.com/)
-//
-[Get VMware Fusion](http://www.vmware.com/products/fusion.html)
-//
-[Get Vagrant VMware Fusion Provider](https://www.vagrantup.com/vmware/)
-//
-[Get Parallels Desktop](https://www.parallels.com/products/desktop/)
-//
-[Get Vagrant Parallels Provider](https://parallels.github.io/vagrant-parallels/)
+* [Parallels Desktop 13 for Mac Pro Edition 13.3.0](https://www.parallels.com/products/desktop/)
+* [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
 
 ## Installation
 
