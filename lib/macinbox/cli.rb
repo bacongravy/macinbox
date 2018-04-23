@@ -89,13 +89,13 @@ module Macinbox
           Actions::CreateImageFromInstaller.new(@options).run
         end
 
-        Logger.info "Creating VMDK from image..." do
-          Actions::CreateVMDKFromImage.new(@options).run
-        end
-
         case @options[:box_format]
 
         when "vmware_fusion"
+
+          Logger.info "Creating VMDK from image..." do
+            Actions::CreateVMDKFromImage.new(@options).run
+          end
 
           Logger.info "Creating box from VMDK..." do
             Actions::CreateBoxFromVMDK.new(@options).run
@@ -103,8 +103,8 @@ module Macinbox
 
         when "parallels"
 
-          Logger.info "Creating HDD from VMDK..." do
-            Actions::CreateHDDFromVMDK.new(@options).run
+          Logger.info "Creating HDD from image..." do
+            Actions::CreateHDDFromImage.new(@options).run
           end
 
           Logger.info "Creating box from HDD..." do

@@ -27,6 +27,5 @@ Gem::Specification.new do |s|
   s.requirements << "macOS High Sierra"
   s.requirements << "macOS High Sierra installer app"
   s.requirements << "Vagrant"
-  s.requirements << "VMware Fusion"
 
 end

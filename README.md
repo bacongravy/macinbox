@@ -14,7 +14,7 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 * macOS 10.13 High Sierra host operating system
 * At least 8 GB RAM (16 GB recommended)
 * At least 2 cores (4 recommended)
-* At least 30 GB of available disk space (60 GB recommended)
+* At least 100 GB of available disk space
 
 ## Dependencies
 
@@ -30,7 +30,6 @@ To create and boot a box in the 'vmware_fusion' format you must also have:
 
 To create and boot a box in the 'parallels' format you must also have:
 
-* VMware Fusion Pro 10.1.1
 * Parallels Desktop 13 for Mac Pro Edition 13.3.0
 * Vagrant Parallels Provider 1.7.8
 
@@ -115,23 +114,21 @@ By default `macinbox` will configure the guest OS to have HiDPI resolutions enab
 
 By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
 
-**Note:** Creating a 'parallels' box requires **both** VMware Fusion and Parallels Desktop to be installed.
-
 ## Implementation Details
 
 This tool performs the following actions:
 
 1. Creates a new blank disk image
 1. Installs macOS
-1. Installs the VMware tools
-1. Updates the SystemPolicyConfiguration KextPolicy to allow the VMware tools kernel extension to load automatically
+1. Installs the VMware or Parallels tools
+1. (VMware only) Updates the SystemPolicyConfiguration KextPolicy to allow the VMware tools kernel extension to load automatically
 1. Adds an .InstallerConfiguration file to automate the Setup Assistant app and create a user account on first boot
 1. Enables password-less sudo
 1. Enables sshd
 1. Adds an rc.installer_cleanup script which waits for the user account to be created on first boot and then installs the default insecure Vagrant SSH key in the user's home directory
 1. Enables HiDPI resolutions
-1. Converts the image into a VMDK
-1. Creates a Vagrant box for the VMware provider using the VMDK
+1. Converts the image into a virtual hard disk
+1. Creates a Vagrant box using the virtual hard disk
 1. Adds the box to Vagrant
 
 
