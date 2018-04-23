@@ -27,7 +27,7 @@ module Macinbox
         @temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t create_vmdk_from_image ]
         @collector.add_temp_dir @temp_dir
 
-        Logger.info "Mounting the image..." do
+        Logger.info "Attaching the image..." do
 
           @collector.on_cleanup do
             %x( diskutil eject #{@device.shellescape} > /dev/null 2>&1 ) if @device
@@ -40,7 +40,7 @@ module Macinbox
             tr -d [:space:]
           )
 
-          raise Macinbox::Error.new("failed to mount the image") unless File.exist? @device
+          raise Macinbox::Error.new("failed to attach the image") unless File.exist? @device
         end
 
         Logger.info "Converting the image to VMDK format..." do
