@@ -19,6 +19,7 @@ module Macinbox
         @parallels_app     = opts[:parallels_path]
 
         @disk_size         = opts[:disk_size]       or raise ArgumentError.new(":disk_size not specified")
+        @fstype            = opts[:fstype]          or raise ArgumentError.new(":fstype not specified")
         @short_name        = opts[:short_name]      or raise ArgumentError.new(":short_name not specified")
         @full_name         = opts[:full_name]       or raise ArgumentError.new(":full_name not specified")
         @password          = opts[:password]        or raise ArgumentError.new(":password not specified")
@@ -95,7 +96,7 @@ module Macinbox
           @scratch_image = "#{@temp_dir}/scratch.sparseimage"
           FileUtils.mkdir @scratch_mountpoint
           quiet_flag = @debug ? [] : %W[ -quiet ]
-          Task.run %W[ hdiutil create -size #{@disk_size}g -type SPARSE -fs HFS+J -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
+          Task.run %W[ hdiutil create -size #{@disk_size}g -type SPARSE -fs #{@fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
           Task.run %W[ hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ] + quiet_flag
         end
       end
@@ -340,6 +341,10 @@ module Macinbox
 
       def save_image
         Logger.info "Saving the image..." do
+          # Sleep for a few seconds to let the disk quiesce, 
+          # or detach will yield error 4096/disk busy when using
+          # apfs
+          Task.run %W[ sleep 15 ]
           Task.run %W[ hdiutil detach -quiet #{@scratch_mountpoint} ]
           FileUtils.mv @scratch_image, "#{@temp_dir}/macinbox.dmg"
           FileUtils.chown ENV["SUDO_USER"], nil, "#{@temp_dir}/macinbox.dmg"

@@ -66,6 +66,7 @@ Usage: macinbox [options]
 
     -n, --name NAME                  Name of the box         (default: macinbox)
     -d, --disk SIZE                  Size (GB) of the disk   (default: 64)
+    -t, --fstype TYPE                Type for disk format    (default: HFS+J)
     -m, --memory SIZE                Size (MB) of the memory (default: 2048)
     -c, --cpu COUNT                  Number of virtual cores (default: 2)
     -s, --short NAME                 Short name of the user  (default: vagrant)
