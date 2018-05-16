@@ -7,7 +7,7 @@ module Macinbox
   class Task
 
     def self.run(cmd)
-      system(*cmd) or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$?.to_i}")
+      system(*cmd) or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$? >> 8}")
     end
 
     def self.run_as_sudo_user(cmd)
