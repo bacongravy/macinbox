@@ -341,11 +341,21 @@ module Macinbox
 
       def save_image
         Logger.info "Saving the image..." do
-          # Sleep for a few seconds to let the disk quiesce, 
-          # or detach will yield error 4096/disk busy when using
-          # apfs
-          Task.run %W[ sleep 15 ]
-          Task.run %W[ hdiutil detach -quiet #{@scratch_mountpoint} ]
+          # detaching sometimes fails at first so we pause to let the disk
+          # quiesce and then retry again a few times before giving up
+          max_attempts = 5
+          for attempt in 1..max_attempts
+            begin
+              Logger.info "Detaching the image..." if @debug
+              quiet_flag = @debug ? [] : %W[ -quiet ]
+              Task.run %W[ hdiutil detach #{@scratch_mountpoint} ] + quiet_flag
+              break
+            rescue Macinbox::Error => error
+              raise if attempt == max_attempts
+              Logger.info "#{error.message}. Sleeping and retrying..." if @debug
+              sleep 15
+            end
+          end
           FileUtils.mv @scratch_image, "#{@temp_dir}/macinbox.dmg"
           FileUtils.chown ENV["SUDO_USER"], nil, "#{@temp_dir}/macinbox.dmg"
           FileUtils.mv "#{@temp_dir}/macinbox.dmg", @output_path
