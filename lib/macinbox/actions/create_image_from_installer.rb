@@ -81,6 +81,10 @@ module Macinbox
           host_os_version_minor = host_os_version_components[1]
           Logger.info "Host macOS version detected: #{host_os_version}" if @debug
 
+          if installer_os_version_major != "10" || installer_os_version_minor != "13"
+            raise Macinbox::Error.new("installer OS version must be 10.13, not #{installer_os_version}")
+          end
+
           if installer_os_version_major != host_os_version_major || installer_os_version_minor != host_os_version_minor
             raise Macinbox::Error.new("host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match")
           end

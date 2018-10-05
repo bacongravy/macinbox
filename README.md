@@ -1,6 +1,6 @@
 # macinbox
 
-Puts macOS in a Vagrant box.
+Puts macOS High Sierra in a Vagrant box.
 
 <p align=center>
   <img src="https://raw.githubusercontent.com/bacongravy/macinbox/demo/demo.gif">
