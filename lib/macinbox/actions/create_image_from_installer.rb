@@ -33,6 +33,7 @@ module Macinbox
         @debug             = opts[:debug]
 
         raise Macinbox::Error.new("Installer app not found") unless File.exist? @installer_app
+        raise Macinbox::Error.new("Installer app cannot be in /Applications directory") if File.dirname(@installer_app).eql? '/Applications'
 
         raise ArgumentError.new(":vmware_path not specified") if @box_format == "vmware_fusion" && !opts[:vmware_path]
         raise ArgumentError.new(":parallels_path not specified") if @box_format == "parallels" && !opts[:parallels_path]
@@ -112,6 +113,7 @@ module Macinbox
           quiet_flag = @debug ? [] : %W[ -quiet ]
           Task.run %W[ hdiutil create -size #{@disk_size}g -type SPARSE -fs #{@fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
           Task.run %W[ hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ] + quiet_flag
+          Task.run %W[ touch #{@scratch_mountpoint}/.mojave-bug ]
         end
       end
 
