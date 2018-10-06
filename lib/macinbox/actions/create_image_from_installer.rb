@@ -119,7 +119,7 @@ module Macinbox
         @scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
         File.write scratch_rc_installer_cleanup, <<~EOF
           #!/bin/sh
-          rm /etc/rc.installer_cleanup
+          rm -f /etc/rc.installer_cleanup
           /etc/rc.vagrant &
           exit 0
         EOF
