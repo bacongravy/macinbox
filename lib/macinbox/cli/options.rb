@@ -10,11 +10,11 @@ module Macinbox
       :box_format      => "vmware_fusion",
       :box_name        => "macinbox",
       :disk_size       => 64,
-      :fstype          => "HFS+J",
+      :fstype          => "APFS",
       :memory_size     => 2048,
       :cpu_count       => 2,
       :short_name      => "vagrant",
-      :installer_path  => "/Applications/Install macOS High Sierra.app",
+      :installer_path  => "/Applications/Install macOS Mojave.app",
       :vmware_path     => "/Applications/VMware Fusion.app",
       :parallels_path  => "/Applications/Parallels Desktop.app",
       :vmware_tools    => true,
@@ -37,7 +37,7 @@ module Macinbox
         o.separator ''
         o.on('-n', '--name NAME',          'Name of the box         (default: macinbox)') { |v| @options[:box_name] = v }
         o.on('-d', '--disk SIZE',          'Size (GB) of the disk   (default: 64)')       { |v| @options[:disk_size] = v }
-        o.on('-t', '--fstype TYPE',        'Type of FS on the disk  (default: HFS+J)')    { |v| @options[:fstype] = v }
+        o.on('-t', '--fstype TYPE',        'Type of FS on the disk  (default: APFS)')     { |v| @options[:fstype] = v }
         o.on('-m', '--memory SIZE',        'Size (MB) of the memory (default: 2048)')     { |v| @options[:memory_size] = v }
         o.on('-c', '--cpu COUNT',          'Number of virtual cores (default: 2)')        { |v| @options[:cpu_count] = v }
         o.on('-s', '--short NAME',         'Short name of the user  (default: vagrant)')  { |v| @options[:short_name] = v }

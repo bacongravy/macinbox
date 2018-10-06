@@ -41,6 +41,7 @@ module Macinbox
       def run
         create_temp_dir
         check_macos_versions
+        create_wrapper_image
         create_scratch_image
         install_macos
         create_rc_vagrant
@@ -66,10 +67,10 @@ module Macinbox
 
       def check_macos_versions
         Logger.info "Checking macOS versions..." do
-          @install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
-          raise Macinbox::Error.new("InstallInfo.plist not found in installer app bundle") unless File.exist? @install_info_plist
+          install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
+          raise Macinbox::Error.new("InstallInfo.plist not found in installer app bundle") unless File.exist? install_info_plist
 
-          installer_os_version = Task.backtick %W[ /usr/libexec/PlistBuddy -c #{'Print :System\ Image\ Info:version'} #{@install_info_plist} ]
+          installer_os_version = Task.backtick %W[ /usr/libexec/PlistBuddy -c #{'Print :System\ Image\ Info:version'} #{install_info_plist} ]
           installer_os_version_components = installer_os_version.split(".") rescue [0, 0, 0]
           installer_os_version_major = installer_os_version_components[0]
           installer_os_version_minor = installer_os_version_components[1]
@@ -81,13 +82,22 @@ module Macinbox
           host_os_version_minor = host_os_version_components[1]
           Logger.info "Host macOS version detected: #{host_os_version}" if @debug
 
-          if installer_os_version_major != "10" || installer_os_version_minor != "13"
-            raise Macinbox::Error.new("installer OS version must be 10.13, not #{installer_os_version}")
-          end
-
           if installer_os_version_major != host_os_version_major || installer_os_version_minor != host_os_version_minor
             raise Macinbox::Error.new("host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match")
           end
+        end
+      end
+
+      def create_wrapper_image
+        Logger.info "Creating and attaching wrapper disk image..." do
+          @collector.on_cleanup do
+            %x( hdiutil detach -quiet -force #{@wrapper_mountpoint.shellescape} > /dev/null 2>&1 ) if @wrapper_mountpoint
+          end
+          @wrapper_mountpoint = "/Volumes/#{File.basename @installer_app, ".app"}"
+          @wrapper_image = "#{@temp_dir}/wrapper.dmg"
+          quiet_flag = @debug ? [] : %W[ -quiet ]
+          Task.run %W[ hdiutil create -srcfolder #{@installer_app} #{@wrapper_image} ] + quiet_flag
+          Task.run %W[ hdiutil attach #{@wrapper_image} -nobrowse ] + quiet_flag
         end
       end
 
@@ -108,7 +118,9 @@ module Macinbox
       def install_macos
         Logger.info "Installing macOS..." do
           activity = Logger.prefix + "installer"
-          cmd = %W[ installer -verboseR -dumplog -pkg #{@install_info_plist} -target #{@scratch_mountpoint} ]
+          install_info_plist = "#{@wrapper_mountpoint}/#{File.basename @installer_app}/Contents/SharedSupport/InstallInfo.plist"
+          Task.run %W[ touch #{@scratch_mountpoint}/.macinbox ]
+          cmd = %W[ installer -verboseR -dumplog -pkg #{install_info_plist} -target #{@scratch_mountpoint} ]
           opts = @debug ? {} : { :err => [:child, :out] }
           Task.run_with_progress activity, cmd, opts do |line|
             /^installer:%(.*)$/.match(line)[1].to_f rescue nil
@@ -121,14 +133,14 @@ module Macinbox
         @scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
         File.write scratch_rc_installer_cleanup, <<~EOF
           #!/bin/sh
-          rm /etc/rc.installer_cleanup
+          rm -f /etc/rc.installer_cleanup
           /etc/rc.vagrant &
           exit 0
         EOF
         FileUtils.chmod 0755, scratch_rc_installer_cleanup
         File.write @scratch_rc_vagrant, <<~EOF
           #!/bin/sh
-          rm /etc/rc.vagrant
+          rm -f /etc/rc.vagrant
         EOF
         FileUtils.chmod 0755, @scratch_rc_vagrant
       end

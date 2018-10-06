@@ -1,6 +1,6 @@
 # macinbox
 
-Puts macOS High Sierra in a Vagrant box.
+Puts macOS Mojave in a Vagrant box.
 
 <p align=center>
   <img src="https://raw.githubusercontent.com/bacongravy/macinbox/demo/demo.gif">
@@ -11,7 +11,7 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 
 ## System Requirements
 
-* macOS 10.13 High Sierra host operating system
+* macOS 10.14 Mojave host operating system
 * At least 8 GB RAM (16 GB recommended)
 * At least 2 cores (4 recommended)
 * At least 100 GB of available disk space
@@ -20,17 +20,17 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* [macOS 10.13.5 High Sierra installer application](http://appstore.com/mac/macoshighsierra)
-* [Vagrant 2.1.1](https://www.vagrantup.com/)
+* [macOS 10.14 Mojave installer application](http://appstore.com/mac/macosmojave)
+* [Vagrant 2.1.5](https://www.vagrantup.com/)
 
 To create and boot a box in the 'vmware_fusion' format you must also have:
 
-* [VMware Fusion Pro 10.1.2](http://www.vmware.com/products/fusion.html)
+* [VMware Fusion Pro 10.1.3](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Fusion Provider 5.0.4](https://www.vagrantup.com/vmware/)
 
 To create and boot a box in the 'parallels' format you must also have:
 
-* [Parallels Desktop 13 for Mac Pro Edition 13.3.0](https://www.parallels.com/products/desktop/)
+* [Parallels Desktop 13 for Mac Pro Edition 13.3.2](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
 
 ## Installation
@@ -66,7 +66,7 @@ Usage: macinbox [options]
 
     -n, --name NAME                  Name of the box         (default: macinbox)
     -d, --disk SIZE                  Size (GB) of the disk   (default: 64)
-    -t, --fstype TYPE                Type for disk format    (default: HFS+J)
+    -t, --fstype TYPE                Type for disk format    (default: APFS)
     -m, --memory SIZE                Size (MB) of the memory (default: 2048)
     -c, --cpu COUNT                  Number of virtual cores (default: 2)
     -s, --short NAME                 Short name of the user  (default: vagrant)
@@ -107,6 +107,7 @@ By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format wi
 
 This tool performs the following actions:
 
+1. Wraps the installer app in a disk image
 1. Creates a new blank disk image
 1. Installs macOS
 1. Installs the VMware or Parallels tools
