@@ -7,7 +7,7 @@ Puts macOS Mojave in a Vagrant box.
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
 
-Supports creating boxes in either the 'vmware_desktop' or 'parallels' formats.
+Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop' or 'parallels' formats.
 
 ## System Requirements
 
@@ -23,7 +23,7 @@ The following software is required. Versions other than those mentioned may work
 * [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
 * [Vagrant 2.2.1](https://www.vagrantup.com/)
 
-To create and boot a box in the 'vmware_desktop' format you must also have:
+To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you must also have:
 
 * [VMware Fusion Pro 10.1.4](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)

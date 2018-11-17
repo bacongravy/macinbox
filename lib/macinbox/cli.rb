@@ -33,11 +33,15 @@ module Macinbox
         raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
       end
 
-      if @options[:box_format] == "vmware_desktop" && !File.exists?(@options[:vmware_path])
+      if not ["vmware_fusion", "vmware_desktop", "parallels"].include? @options[:box_format]
+        raise Macinbox::Error.new("Box format not supported: #{@options[:box_format]}")
+      end
+
+      if /^vmware_(fusion|desktop)$/ === @options[:box_format] && !File.exists?(@options[:vmware_path])
         raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
       end
 
-      if @options[:box_format] == "parallels" && !File.exists?(@options[:parallels_path])
+      if /^parallels$/ === @options[:box_format] && !File.exists?(@options[:parallels_path])
         raise Macinbox::Error.new("Parallels Desktop app not found: #{@options[:parallels_path]}")
       end
 
@@ -91,7 +95,7 @@ module Macinbox
 
         case @options[:box_format]
 
-        when "vmware_desktop"
+        when /^vmware_(fusion|desktop)$/
 
           Logger.info "Creating VMDK from image..." do
             Actions::CreateVMDKFromImage.new(@options).run
@@ -101,7 +105,7 @@ module Macinbox
             Actions::CreateBoxFromVMDK.new(@options).run
           end
 
-        when "parallels"
+        when /^parallels$/
 
           Logger.info "Creating HDD from image..." do
             Actions::CreateHDDFromImage.new(@options).run

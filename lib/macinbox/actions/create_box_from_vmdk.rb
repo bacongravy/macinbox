@@ -19,6 +19,7 @@ module Macinbox
         @cpu_count         = opts[:cpu_count]       or raise ArgumentError.new(":cpu_count not specified")
         @memory_size       = opts[:memory_size]     or raise ArgumentError.new(":memory_size not specified")
 
+        @box_format        = opts[:box_format]
         @gui               = opts[:gui]
         @fullscreen        = opts[:fullscreen]
         @hidpi             = opts[:hidpi]
@@ -27,6 +28,7 @@ module Macinbox
         @debug             = opts[:debug]
 
         raise Macinbox::Error.new("VMDK not found") unless File.exist? @input_vmdk
+        raise Macinbox::Error.new("Box format not supported: #{@box_format}") unless ["vmware_fusion", "vmware_desktop"].include? @box_format        
       end
 
       def run
@@ -111,7 +113,7 @@ module Macinbox
           end
 
           File.write "#{@box_dir}/metadata.json", <<~EOF
-            {"provider": "vmware_desktop"}
+            {"provider": "#{@box_format}"}
           EOF
 
           File.write "#{@box_dir}/Vagrantfile", <<~EOF
@@ -119,7 +121,7 @@ module Macinbox
               config.vm.box_check_update = false
               config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
               config.vm.synced_folder ".", "/vagrant", disabled: true
-              config.vm.provider "vmware_desktop" do |v|
+              config.vm.provider "#{@box_format}" do |v|
                 v.vmx["ethernet0.virtualDev"] = "e1000e"
                 v.gui = #{@gui}
               end

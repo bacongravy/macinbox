@@ -46,10 +46,10 @@ module Macinbox
         install_macos
         create_rc_vagrant
         case @box_format
-        when "vmware_desktop"
+        when /^vmware_(fusion|desktop)$/
           install_vmware_tools
           set_spc_kextpolicy
-        when "parallels"
+        when /^parallels$/
           install_parallels_tools
         end
         automate_user_account_creation
