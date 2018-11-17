@@ -20,12 +20,12 @@ Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* [macOS 10.14 Mojave installer application](http://appstore.com/mac/macosmojave)
-* [Vagrant 2.1.5](https://www.vagrantup.com/)
+* [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
+* [Vagrant 2.2.1](https://www.vagrantup.com/)
 
 To create and boot a box in the 'vmware_fusion' format you must also have:
 
-* [VMware Fusion Pro 10.1.3](http://www.vmware.com/products/fusion.html)
+* [VMware Fusion Pro 10.1.4](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Fusion Provider 5.0.4](https://www.vagrantup.com/vmware/)
 
 To create and boot a box in the 'parallels' format you must also have:
