@@ -111,7 +111,7 @@ module Macinbox
           end
 
           File.write "#{@box_dir}/metadata.json", <<~EOF
-            {"provider": "vmware_fusion"}
+            {"provider": "vmware_desktop"}
           EOF
 
           File.write "#{@box_dir}/Vagrantfile", <<~EOF
@@ -119,7 +119,7 @@ module Macinbox
               config.vm.box_check_update = false
               config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
               config.vm.synced_folder ".", "/vagrant", disabled: true
-              config.vm.provider "vmware_fusion" do |v|
+              config.vm.provider "vmware_desktop" do |v|
                 v.vmx["ethernet0.virtualDev"] = "e1000e"
                 v.gui = #{@gui}
               end

@@ -7,7 +7,7 @@ Puts macOS Mojave in a Vagrant box.
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
 
-Supports creating boxes in either the 'vmware_fusion' or 'parallels' formats.
+Supports creating boxes in either the 'vmware_desktop' or 'parallels' formats.
 
 ## System Requirements
 
@@ -23,10 +23,10 @@ The following software is required. Versions other than those mentioned may work
 * [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
 * [Vagrant 2.2.1](https://www.vagrantup.com/)
 
-To create and boot a box in the 'vmware_fusion' format you must also have:
+To create and boot a box in the 'vmware_desktop' format you must also have:
 
 * [VMware Fusion Pro 10.1.4](http://www.vmware.com/products/fusion.html)
-* [Vagrant VMware Fusion Provider 5.0.4](https://www.vagrantup.com/vmware/)
+* [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
 
 To create and boot a box in the 'parallels' format you must also have:
 
@@ -62,7 +62,7 @@ To see the advanced options, pass the `--help` option:
 ```
 Usage: macinbox [options]
 
-        --box-format FORMAT          Format of the box (default: vmware_fusion)
+        --box-format FORMAT          Format of the box (default: vmware_desktop)
 
     -n, --name NAME                  Name of the box         (default: macinbox)
     -d, --disk SIZE                  Size (GB) of the disk   (default: 64)
@@ -101,7 +101,7 @@ By default `macinbox` will configure the guest OS to have HiDPI resolutions enab
 
 ## Box Format Support
 
-By default `macinbox` will create a Vagrant box in the 'vmware_fusion' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
 
 ## Implementation Details
 

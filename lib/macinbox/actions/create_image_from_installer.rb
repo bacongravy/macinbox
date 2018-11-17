@@ -34,7 +34,7 @@ module Macinbox
 
         raise Macinbox::Error.new("Installer app not found") unless File.exist? @installer_app
 
-        raise ArgumentError.new(":vmware_path not specified") if @box_format == "vmware_fusion" && !opts[:vmware_path]
+        raise ArgumentError.new(":vmware_path not specified") if @box_format == "vmware_desktop" && !opts[:vmware_path]
         raise ArgumentError.new(":parallels_path not specified") if @box_format == "parallels" && !opts[:parallels_path]
       end
 
@@ -46,7 +46,7 @@ module Macinbox
         install_macos
         create_rc_vagrant
         case @box_format
-        when "vmware_fusion"
+        when "vmware_desktop"
           install_vmware_tools
           set_spc_kextpolicy
         when "parallels"

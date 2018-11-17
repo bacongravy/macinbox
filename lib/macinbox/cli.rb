@@ -33,7 +33,7 @@ module Macinbox
         raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
       end
 
-      if @options[:box_format] == "vmware_fusion" && !File.exists?(@options[:vmware_path])
+      if @options[:box_format] == "vmware_desktop" && !File.exists?(@options[:vmware_path])
         raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
       end
 
@@ -91,7 +91,7 @@ module Macinbox
 
         case @options[:box_format]
 
-        when "vmware_fusion"
+        when "vmware_desktop"
 
           Logger.info "Creating VMDK from image..." do
             Actions::CreateVMDKFromImage.new(@options).run

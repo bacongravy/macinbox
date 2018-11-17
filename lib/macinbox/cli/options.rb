@@ -7,7 +7,7 @@ module Macinbox
   class CLI
 
     DEFAULT_OPTION_VALUES = {
-      :box_format      => "vmware_fusion",
+      :box_format      => "vmware_desktop",
       :box_name        => "macinbox",
       :disk_size       => 64,
       :fstype          => "APFS",
@@ -33,7 +33,7 @@ module Macinbox
       @option_parser = OptionParser.new do |o|
 
         o.separator ''
-        o.on(      '--box-format FORMAT',  'Format of the box (default: vmware_fusion)')  { |v| @options[:box_format] = v }
+        o.on(      '--box-format FORMAT',  'Format of the box (default: vmware_desktop)')  { |v| @options[:box_format] = v }
         o.separator ''
         o.on('-n', '--name NAME',          'Name of the box         (default: macinbox)') { |v| @options[:box_name] = v }
         o.on('-d', '--disk SIZE',          'Size (GB) of the disk   (default: 64)')       { |v| @options[:disk_size] = v }
