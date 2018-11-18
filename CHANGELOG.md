@@ -12,7 +12,7 @@ BREAKING CHANGES:
 
 IMPROVEMENTS:
 
-- Warn instead of raising an error when host and installer versions do not match. Allows Mojave boxes to be created from High Sierra.
+- Warn instead of raising an error when host and installer versions do not match. Allows Mojave boxes to be created from High Sierra. [GH-13]
 
 ## 2.0.0 (October 18, 2018)
 
