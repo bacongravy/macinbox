@@ -40,10 +40,10 @@ module Macinbox
       def stopPrivilegedHelper(helper_name)
         targetBin   = "/Library/PrivilegedHelperTools/#{helper_name}"
         targetPlist = "/Library/LaunchDaemons/#{helper_name}.plist"
-        Task.run %W[ launchctl stop #{helper_name} || true ]
-        Task.run %W[ launchctl unload #{targetPlist} || true ]
-        Task.run %W[ rm #{targetBin} || true ]
-        Task.run %W[ rm #{targetPlist} || true ]
+        Task.run %W[ launchctl stop #{helper_name} ]
+        Task.run %W[ launchctl unload #{targetPlist} ]
+        Task.run %W[ rm #{targetBin} ]
+        Task.run %W[ rm #{targetPlist} ]
       end
 
       def run
