@@ -3,6 +3,7 @@
 FEATURES:
 
 - Add support for vmware_desktop box format.
+- Add support for VAGRANT_HOME environment variable.
 
 BREAKING CHANGES:
 

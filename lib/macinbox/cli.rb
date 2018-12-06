@@ -45,6 +45,22 @@ module Macinbox
         raise Macinbox::Error.new("Parallels Desktop app not found: #{@options[:parallels_path]}")
       end
 
+      vagrant_home = ENV["VAGRANT_HOME"]
+
+      if vagrant_home.nil? or vagrant_home.empty?
+        vagrant_home = File.expand_path "~/.vagrant.d"
+      end
+
+      if !File.exist? vagrant_home
+        raise Macinbox::Error.new("VAGRANT_HOME not found: #{vagrant_home}")
+      end
+
+      vagrant_boxes_dir = "#{vagrant_home}/boxes"
+
+      if !File.exist? vagrant_boxes_dir
+        Dir.mkdir vagrant_boxes_dir
+      end
+
       root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root_temp ]
       user_temp_dir = Task.backtick %W[ sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user_temp ]
 
@@ -85,6 +101,7 @@ module Macinbox
       @options[:vmdk_path] = "macinbox.vmdk"
       @options[:hdd_path] = "macinbox.hdd"
       @options[:box_path] = "macinbox.box"
+      @options[:boxes_dir] = vagrant_boxes_dir
       @options[:collector] = collector
 
       Dir.chdir(root_temp_dir) do

@@ -93,7 +93,11 @@ Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to
 
 This advanced example creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
 
-    $ macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
+    $ sudo macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
+
+If you have the VAGRANT_HOME environment variable set and want the created box to be added to the 'boxes' directory in that location you will need to tell sudo to pass it through to macinbox, e.g.:
+
+    $ sudo "VAGRANT_HOME=${VAGRANT_HOME}" macinbox
 
 ## Retina Display and HiDPI Support
 
@@ -180,6 +184,7 @@ opts[:image_path] = "macinbox.dmg"
 opts[:vmdk_path] = "macinbox.vmdk"
 opts[:hdd_path] = "macinbox.hdd"
 opts[:box_path] = "macinbox.box"
+opts[:boxes_dir] = File.expand_path "~/.vagrant.d"
 opts[:debug] = true
 include Macinbox::Actions
 CreateImageFromInstaller.new(opts).run
