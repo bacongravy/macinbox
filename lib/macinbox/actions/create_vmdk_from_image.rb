@@ -23,13 +23,13 @@ module Macinbox
         raise Macinbox::Error.new("VMware Fusion not found") unless File.exist? @vmware_fusion_app
       end
 
-      def self.startPrivilegedHelper(helper_name)
-        targetBinDir = "/Library/PrivilegedHelperTools"
+      def startPrivilegedHelper(helper_name)
+        targetBinDir   = "/Library/PrivilegedHelperTools"
         targetPlistDir = "/Library/LaunchDaemons"
-        sourceBin = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}"
-        sourcePlist = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}.plist"
-        targetBin = "#{targetBinDir}/#{helper_name}"
-        targetPlist = "#{targetPlistDir}/#{helper_name}.plist"
+        sourceBin      = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}"
+        sourcePlist    = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}.plist"
+        targetBin      = "#{targetBinDir}/#{helper_name}"
+        targetPlist    = "#{targetPlistDir}/#{helper_name}.plist"
         Task.run %W[ cp -f -- #{sourceBin} #{targetBinDir} ]
         Task.run %W[ chmod 544 #{targetBin} ]
         Task.run %W[ cp -f -- #{sourcePlist} #{targetPlistDir} ]
@@ -37,8 +37,8 @@ module Macinbox
         Task.run %W[ launchctl load #{targetPlist} ]
       end
 
-      def self.stopPrivilegedHelper(helperName)
-        targetBin = "/Library/PrivilegedHelperTools/#{helper_name}"
+      def stopPrivilegedHelper(helper_name)
+        targetBin   = "/Library/PrivilegedHelperTools/#{helper_name}"
         targetPlist = "/Library/LaunchDaemons/#{helper_name}.plist"
         Task.run %W[ launchctl stop #{targetBin} || true ]
         Task.run %W[ launchctl unload #{targetPlist} || true ]
@@ -69,14 +69,14 @@ module Macinbox
         Logger.info "Converting the image to VMDK format..." do
           rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
           vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
-          CreateVMDKFromImage.startPrivilegedHelper("com.vmware.DiskHelper")
-          CreateVMDKFromImage.startPrivilegedHelper("com.vmware.MountHelper")
+          startPrivilegedHelper("com.vmware.DiskHelper")
+          startPrivilegedHelper("com.vmware.MountHelper")
           Dir.chdir(@temp_dir) do
             Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
-          CreateVMDKFromImage.stopPrivilegedHelper("com.vmware.DiskHelper")
-          CreateVMDKFromImage.stopPrivilegedHelper("com.vmware.MountHelper")
+          stopPrivilegedHelper("com.vmware.DiskHelper")
+          stopPrivilegedHelper("com.vmware.MountHelper")
           Task.run %W[ diskutil eject #{@device.shellescape} ]
           @device = nil
         end
