@@ -23,7 +23,7 @@ module Macinbox
         raise Macinbox::Error.new("VMware Fusion not found") unless File.exist? @vmware_fusion_app
       end
 
-      def startPrivilegedHelper(helper_name)
+      def start_privileged_helper(helper_name)
         targetBinDir   = "/Library/PrivilegedHelperTools"
         targetPlistDir = "/Library/LaunchDaemons"
         sourceBin      = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}"
@@ -37,7 +37,7 @@ module Macinbox
         Task.run %W[ launchctl load #{targetPlist} ]
       end
 
-      def stopPrivilegedHelper(helper_name)
+      def stop_privileged_helper(helper_name)
         targetBin   = "/Library/PrivilegedHelperTools/#{helper_name}"
         targetPlist = "/Library/LaunchDaemons/#{helper_name}.plist"
         Task.run %W[ launchctl stop #{helper_name} ]
@@ -69,14 +69,14 @@ module Macinbox
         Logger.info "Converting the image to VMDK format..." do
           rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
           vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
-          startPrivilegedHelper("com.vmware.DiskHelper")
-          startPrivilegedHelper("com.vmware.MountHelper")
+          start_privileged_helper("com.vmware.DiskHelper")
+          start_privileged_helper("com.vmware.MountHelper")
           Dir.chdir(@temp_dir) do
             Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
-          stopPrivilegedHelper("com.vmware.DiskHelper")
-          stopPrivilegedHelper("com.vmware.MountHelper")
+          stop_privileged_helper("com.vmware.DiskHelper")
+          stop_privileged_helper("com.vmware.MountHelper")
           Task.run %W[ diskutil eject #{@device.shellescape} ]
           @device = nil
         end
