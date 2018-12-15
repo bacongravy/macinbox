@@ -21,16 +21,18 @@ Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop' or 'para
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
 * [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
-* [Vagrant 2.2.1](https://www.vagrantup.com/)
+* [Vagrant 2.2.2](https://www.vagrantup.com/)
 
 To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you must also have:
 
-* [VMware Fusion Pro 10.1.4](http://www.vmware.com/products/fusion.html)
+* [VMware Fusion Pro 10.1.5](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
+
+**NOTE:** VMware Fusion Pro 11 is not yet supported; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information.
 
 To create and boot a box in the 'parallels' format you must also have:
 
-* [Parallels Desktop 13 for Mac Pro Edition 13.3.2](https://www.parallels.com/products/desktop/)
+* [Parallels Desktop 14 for Mac Pro Edition 14.0.1](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
 
 ## Installation
