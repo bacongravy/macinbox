@@ -1,3 +1,5 @@
+## Next version (Unreleased)
+
 ## 3.0.0 (December 14, 2018)
 
 FEATURES:
