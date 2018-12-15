@@ -1,13 +1,17 @@
-## Next version (Unreleased)
+## 3.0.0 (December 14, 2018)
 
 FEATURES:
 
-- Add support for vmware_desktop box format.
-- Add support for VAGRANT_HOME environment variable.
+- Add support for vmware_desktop box format. [GH-14]
+- Add support for VAGRANT_HOME environment variable. [GH-15]
+
+IMPROVEMENTS:
+
+- Use full paths when invoking external commands. [GH-16]
 
 BREAKING CHANGES:
 
-- Switch default box format to vmware_desktop. Requires the Vagrant VMware Desktop Plugin.
+- Switch default box format to vmware_desktop. Requires the Vagrant VMware Desktop Plugin. [GH-14]
 
 ## 2.0.1 (November 16, 2018)
 
