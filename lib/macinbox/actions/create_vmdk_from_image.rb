@@ -30,14 +30,14 @@ module Macinbox
         Logger.info "Attaching the image..." do
 
           @collector.on_cleanup do
-            %x( diskutil eject #{@device.shellescape} > /dev/null 2>&1 ) if @device
+            %x( /usr/sbin/diskutil eject #{@device.shellescape} > /dev/null 2>&1 ) if @device
           end
 
           @device = %x(
-            hdiutil attach #{@input_image.shellescape} -nomount |
-            grep _partition_scheme |
-            cut -f1 |
-            tr -d [:space:]
+            /usr/bin/hdiutil attach #{@input_image.shellescape} -nomount |
+            /usr/bin/grep _partition_scheme |
+            /usr/bin/cut -f1 |
+            /usr/bin/tr -d [:space:]
           )
 
           raise Macinbox::Error.new("failed to attach the image") unless File.exist? @device
@@ -50,7 +50,7 @@ module Macinbox
             Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ]
             Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
           end
-          Task.run %W[ diskutil eject #{@device.shellescape} ]
+          Task.run %W[ /usr/sbin/diskutil eject #{@device.shellescape} ]
           @device = nil
         end
 

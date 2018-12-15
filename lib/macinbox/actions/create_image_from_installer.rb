@@ -92,27 +92,27 @@ module Macinbox
       def create_wrapper_image
         Logger.info "Creating and attaching wrapper disk image..." do
           @collector.on_cleanup do
-            %x( hdiutil detach -quiet -force #{@wrapper_mountpoint.shellescape} > /dev/null 2>&1 ) if @wrapper_mountpoint
+            %x( /usr/bin/hdiutil detach -quiet -force #{@wrapper_mountpoint.shellescape} > /dev/null 2>&1 ) if @wrapper_mountpoint
           end
           @wrapper_mountpoint = "/Volumes/#{File.basename @installer_app, ".app"}"
           @wrapper_image = "#{@temp_dir}/wrapper.dmg"
           quiet_flag = @debug ? [] : %W[ -quiet ]
-          Task.run %W[ hdiutil create -srcfolder #{@installer_app} #{@wrapper_image} ] + quiet_flag
-          Task.run %W[ hdiutil attach #{@wrapper_image} -nobrowse ] + quiet_flag
+          Task.run %W[ /usr/bin/hdiutil create -srcfolder #{@installer_app} #{@wrapper_image} ] + quiet_flag
+          Task.run %W[ /usr/bin/hdiutil attach #{@wrapper_image} -nobrowse ] + quiet_flag
         end
       end
 
       def create_scratch_image
         Logger.info "Creating and attaching a new blank disk image..." do
           @collector.on_cleanup do
-            %x( hdiutil detach -quiet -force #{@scratch_mountpoint.shellescape} > /dev/null 2>&1 ) if @scratch_mountpoint
+            %x( /usr/bin/hdiutil detach -quiet -force #{@scratch_mountpoint.shellescape} > /dev/null 2>&1 ) if @scratch_mountpoint
           end
           @scratch_mountpoint = "#{@temp_dir}/scratch_mountpoint"
           @scratch_image = "#{@temp_dir}/scratch.sparseimage"
           FileUtils.mkdir @scratch_mountpoint
           quiet_flag = @debug ? [] : %W[ -quiet ]
-          Task.run %W[ hdiutil create -size #{@disk_size}g -type SPARSE -fs #{@fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
-          Task.run %W[ hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ] + quiet_flag
+          Task.run %W[ /usr/bin/hdiutil create -size #{@disk_size}g -type SPARSE -fs #{@fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
+          Task.run %W[ /usr/bin/hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ] + quiet_flag
         end
       end
 
@@ -120,8 +120,8 @@ module Macinbox
         Logger.info "Installing macOS..." do
           activity = Logger.prefix + "installer"
           install_info_plist = "#{@wrapper_mountpoint}/#{File.basename @installer_app}/Contents/SharedSupport/InstallInfo.plist"
-          Task.run %W[ touch #{@scratch_mountpoint}/.macinbox ]
-          cmd = %W[ installer -verboseR -dumplog -pkg #{install_info_plist} -target #{@scratch_mountpoint} ]
+          Task.run %W[ /usr/bin/touch #{@scratch_mountpoint}/.macinbox ]
+          cmd = %W[ /usr/sbin/installer -verboseR -dumplog -pkg #{install_info_plist} -target #{@scratch_mountpoint} ]
           opts = @debug ? {} : { :err => [:child, :out] }
           Task.run_with_progress activity, cmd, opts do |line|
             /^installer:%(.*)$/.match(line)[1].to_f rescue nil
@@ -148,7 +148,7 @@ module Macinbox
 
       def install_vmware_tools
         @collector.on_cleanup do
-          %x( hdiutil detach -quiet -force #{@tools_mountpoint.shellescape} > /dev/null 2>&1 ) if @tools_mountpoint
+          %x( /usr/bin/hdiutil detach -quiet -force #{@tools_mountpoint.shellescape} > /dev/null 2>&1 ) if @tools_mountpoint
         end
 
         tools_image = "#{@vmware_fusion_app}/Contents/Library/isoimages/darwin.iso"
@@ -159,9 +159,9 @@ module Macinbox
             bundle_short_version = Task.backtick %W[ defaults read #{"/Applications/VMware Fusion.app/Contents/Info.plist"} CFBundleShortVersionString ]
             darwin_iso_url = "http://softwareupdate.vmware.com/cds/vmw-desktop/fusion/#{bundle_short_version}/#{bundle_version}/packages/com.vmware.fusion.tools.darwin.zip.tar"
             Dir.chdir(@temp_dir) do
-              Task.run %W[ curl #{darwin_iso_url} -O ] + (@debug ? [] : %W[ -s -S ])
-              Task.run %W[ tar -xf com.vmware.fusion.tools.darwin.zip.tar com.vmware.fusion.tools.darwin.zip ]
-              Task.run %W[ unzip ] + (@debug ? [] : %W[ -qq ]) + %W[ com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
+              Task.run %W[ /usr/bin/curl #{darwin_iso_url} -O ] + (@debug ? [] : %W[ -s -S ])
+              Task.run %W[ /usr/bin/tar -xf com.vmware.fusion.tools.darwin.zip.tar com.vmware.fusion.tools.darwin.zip ]
+              Task.run %W[ /usr/bin/unzip ] + (@debug ? [] : %W[ -qq ]) + %W[ com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
             end
             tools_image = "#{@temp_dir}/payload/darwin.iso"
           end
@@ -176,9 +176,9 @@ module Macinbox
 
           quiet_flag = @debug ? [] : %W[ -quiet ]
 
-          Task.run %W[ hdiutil attach #{tools_image} -mountpoint #{@tools_mountpoint} -nobrowse ] + quiet_flag
-          Task.run %W[ pkgutil --expand #{tools_package} #{tools_package_dir} ]
-          Task.run %W[ ditto -x -z #{tools_package_dir}/files.pkg/Payload #{@scratch_mountpoint} ]
+          Task.run %W[ /usr/bin/hdiutil attach #{tools_image} -mountpoint #{@tools_mountpoint} -nobrowse ] + quiet_flag
+          Task.run %W[ /usr/sbin/pkgutil --expand #{tools_package} #{tools_package_dir} ]
+          Task.run %W[ /usr/bin/ditto -x -z #{tools_package_dir}/files.pkg/Payload #{@scratch_mountpoint} ]
 
           scratch_vmhgfs_filesystem_resources = "#{@scratch_mountpoint}/Library/Filesystems/vmhgfs.fs/Contents/Resources"
 
@@ -190,7 +190,7 @@ module Macinbox
       def set_spc_kextpolicy
         Logger.info "Setting the KextPolicy to allow loading the VMware kernel extensions..." do
           scratch_spc_kextpolicy = "#{@scratch_mountpoint}/private/var/db/SystemPolicyConfiguration/KextPolicy"
-          Task.run_with_input ["sqlite3", scratch_spc_kextpolicy] do |pipe|
+          Task.run_with_input %W[ /usr/bin/sqlite3 #{scratch_spc_kextpolicy} ] do |pipe|
             pipe.write <<~EOF
               PRAGMA foreign_keys=OFF;
               BEGIN TRANSACTION;
@@ -210,7 +210,7 @@ module Macinbox
       def install_parallels_tools
 
         @collector.on_cleanup do
-          %x( hdiutil detach -quiet -force #{@tools_mountpoint.shellescape} > /dev/null 2>&1 ) if @tools_mountpoint
+          %x( /usr/bin/hdiutil detach -quiet -force #{@tools_mountpoint.shellescape} > /dev/null 2>&1 ) if @tools_mountpoint
         end
 
         Logger.info "Installing the Parallels Tools..." do
@@ -222,7 +222,7 @@ module Macinbox
 
           tools_image = "#{@parallels_app}/Contents/Resources/Tools/prl-tools-mac.iso"
 
-          Task.run %W[ hdiutil attach #{tools_image} -mountpoint #{@tools_mountpoint} -nobrowse ] + quiet_flag
+          Task.run %W[ /usr/bin/hdiutil attach #{tools_image} -mountpoint #{@tools_mountpoint} -nobrowse ] + quiet_flag
 
           tools_packages_dir = "#{@tools_mountpoint}/Install.app/Contents/Resources/Install.mpkg/Contents/Packages"
 
@@ -245,8 +245,8 @@ module Macinbox
           FileUtils.mkdir tools_expanded_packages_dir
 
           tools_packages.each do |package|
-            Task.run %W[ pkgutil --expand #{tools_packages_dir}/#{package} #{tools_expanded_packages_dir}/#{package} ]
-            Task.run %W[ ditto -x -z #{tools_expanded_packages_dir}/#{package}/Payload #{@scratch_mountpoint} ]
+            Task.run %W[ /usr/sbin/pkgutil --expand #{tools_packages_dir}/#{package} #{tools_expanded_packages_dir}/#{package} ]
+            Task.run %W[ /usr/bin/ditto -x -z #{tools_expanded_packages_dir}/#{package}/Payload #{@scratch_mountpoint} ]
           end
 
           prl_nettool_source = "/Library/Parallels Guest Tools/prl_nettool"
@@ -256,7 +256,7 @@ module Macinbox
           FileUtils.ln_s prl_nettool_source, prl_nettool_target
 
           prl_fsd_plist = "#{@scratch_mountpoint}/Library/LaunchDaemons/com.parallels.vm.prl_fsd.plist"
-          Task.run %W[ sed -i #{''} s/PARALLELS_ADDITIONAL_ARGS/--share/ #{prl_fsd_plist} ]
+          Task.run %W[ /usr/bin/sed -i #{''} s/PARALLELS_ADDITIONAL_ARGS/--share/ #{prl_fsd_plist} ]
 
           contents = "/Library/Parallels\ Guest\ Tools/dynres --enable-retina\n"
           File.write @scratch_rc_vagrant, contents, mode: 'a'
@@ -365,7 +365,7 @@ module Macinbox
             begin
               Logger.info "Detaching the image..." if @debug
               quiet_flag = @debug ? [] : %W[ -quiet ]
-              Task.run %W[ hdiutil detach #{@scratch_mountpoint} ] + quiet_flag
+              Task.run %W[ /usr/bin/hdiutil detach #{@scratch_mountpoint} ] + quiet_flag
               break
             rescue Macinbox::Error => error
               raise if attempt == max_attempts
