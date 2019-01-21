@@ -126,7 +126,8 @@ module Macinbox
         Logger.info "Setting up EFI partition..." do
           @efi_mountpoint = "#{@temp_dir}/efi_mountpoint"
           FileUtils.mkdir @efi_mountpoint
-          Task.run %W[ /usr/sbin/diskutil mount -mountPoint #{@efi_mountpoint} #{@efi_device} ]
+          opts = @debug ? {} : { :out => File::NULL }
+          Task.run %W[ /usr/sbin/diskutil mount -mountPoint #{@efi_mountpoint} #{@efi_device} ] + [opts]
           Task.run %W[ /bin/mkdir -p #{@efi_mountpoint}/EFI/drivers ]
           Task.run %W[ /bin/cp /usr/standalone/i386/apfs.efi #{@efi_mountpoint}/EFI/drivers/ ]
           File.write "#{@efi_mountpoint}/startup.nsh", <<~'EOF'
@@ -144,7 +145,7 @@ module Macinbox
             endfor
             echo "Failed."
           EOF
-          Task.run %W[ /usr/sbin/diskutil unmount #{@efi_device} ]
+          Task.run %W[ /usr/sbin/diskutil unmount #{@efi_device} ] + [opts]
         end
       end
 
