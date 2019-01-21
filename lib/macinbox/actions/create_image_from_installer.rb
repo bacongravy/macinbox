@@ -43,6 +43,10 @@ module Macinbox
         check_macos_versions
         create_wrapper_image
         create_scratch_image
+        case @box_format
+        when /^virtualbox$/
+          setup_efi_partition
+        end
         install_macos
         create_rc_vagrant
         case @box_format
@@ -112,7 +116,35 @@ module Macinbox
           FileUtils.mkdir @scratch_mountpoint
           quiet_flag = @debug ? [] : %W[ -quiet ]
           Task.run %W[ /usr/bin/hdiutil create -size #{@disk_size}g -type SPARSE -fs #{@fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@scratch_image} ] + quiet_flag
-          Task.run %W[ /usr/bin/hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ] + quiet_flag
+          devices = Task.backtick %W[ /usr/bin/hdiutil attach #{@scratch_image} -mountpoint #{@scratch_mountpoint} -nobrowse -owners on ]
+          puts devices if @debug
+          @efi_device = devices[/([^ \n]*)([ \t])+EFI/, 1]
+        end
+      end
+
+      def setup_efi_partition
+        Logger.info "Setting up EFI partition..." do
+          @efi_mountpoint = "#{@temp_dir}/efi_mountpoint"
+          FileUtils.mkdir @efi_mountpoint
+          Task.run %W[ /usr/sbin/diskutil mount -mountPoint #{@efi_mountpoint} #{@efi_device} ]
+          Task.run %W[ /bin/mkdir -p #{@efi_mountpoint}/EFI/drivers ]
+          Task.run %W[ /bin/cp /usr/standalone/i386/apfs.efi #{@efi_mountpoint}/EFI/drivers/ ]
+          File.write "#{@efi_mountpoint}/startup.nsh", <<~'EOF'
+            @echo -off
+            echo "Loading APFS driver..."
+            load "fs0:\EFI\drivers\apfs.efi"
+            echo "Refreshing media mappings..."
+            map -r
+            echo "Searching for bootloader..."
+            for %d in fs1 fs2 fs3 fs4 fs5 fs6
+              if exist "%d:\System\Library\CoreServices\boot.efi" then
+                echo "Found %d:\System\Library\CoreServices\boot.efi, launching..."
+                "%d:\System\Library\CoreServices\boot.efi"
+              endif
+            endfor
+            echo "Failed."
+          EOF
+          Task.run %W[ /usr/sbin/diskutil unmount #{@efi_device} ]
         end
       end
 

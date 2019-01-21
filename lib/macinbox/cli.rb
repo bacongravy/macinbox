@@ -33,7 +33,7 @@ module Macinbox
         raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
       end
 
-      if not ["vmware_fusion", "vmware_desktop", "parallels"].include? @options[:box_format]
+      if not ["vmware_fusion", "vmware_desktop", "parallels", "virtualbox"].include? @options[:box_format]
         raise Macinbox::Error.new("Box format not supported: #{@options[:box_format]}")
       end
 
@@ -43,6 +43,10 @@ module Macinbox
 
       if /^parallels$/ === @options[:box_format] && !File.exists?(@options[:parallels_path])
         raise Macinbox::Error.new("Parallels Desktop app not found: #{@options[:parallels_path]}")
+      end
+
+      if /^virtualbox$/ === @options[:box_format] && !File.exists?('/usr/local/bin/VBoxManage')
+        raise Macinbox::Error.new("VBoxManage not found: /usr/local/bin/VBoxManage")
       end
 
       vagrant_home = ENV["VAGRANT_HOME"]
@@ -130,6 +134,16 @@ module Macinbox
 
           Logger.info "Creating box from HDD..." do
             Actions::CreateBoxFromHDD.new(@options).run
+          end
+
+        when /^virtualbox$/
+
+          Logger.info "Creating VDI from image..." do
+            Actions::CreateVDIFromImage.new(@options).run
+          end
+
+          Logger.info "Creating box from VDI..." do
+            Actions::CreateBoxFromVDI.new(@options).run
           end
 
         end

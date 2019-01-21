@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+FEATURES:
+
+- Add support for virtualbox box format. [GH-18]
+
 BUG FIXES:
 
 - Make vagrant ssh key installation more reliable.

@@ -7,7 +7,7 @@ Puts macOS Mojave in a Vagrant box.
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
 
-Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop' or 'parallels' formats.
+Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop', 'parallels', or 'virtualbox' formats.
 
 ## System Requirements
 
@@ -34,6 +34,10 @@ To create and boot a box in the 'parallels' format you must also have:
 
 * [Parallels Desktop 14 for Mac Pro Edition 14.0.1](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
+
+To create and boot a box in the 'virtualbox' format you must also have:
+
+* [VirtualBox 6.0.2 with the extension pack](https://www.virtualbox.org)
 
 ## Installation
 
@@ -107,7 +111,11 @@ By default `macinbox` will configure the guest OS to have HiDPI resolutions enab
 
 ## Box Format Support
 
-By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format with the VMware Tools pre-installed.
+
+When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+
+When the box format is set to 'virtualbox' no guest extensions are installed. Note that some features behave differently with VirtualBox. The screen resolution is set to 1280x800 and HiDPI resolutions are not supported. The GUI scale factor is set to 2.0 (so that the VM displays properly on a host with a retina display) unless the `--no-hidpi` option is used. Lastly, ssh port-forwarding is enabled by default so that the host can connect to the guest.
 
 ## Implementation Details
 
@@ -131,7 +139,7 @@ This tool performs the following actions:
 The box created by this tool includes a built-in Vagrantfile which disables the following default Vagrant behaviors:
 
 1. Checking Vagrant Cloud for new versions of the box
-1. Forwarding from port 2222 on the host to port 22 (ssh) on the guest
+1. Forwarding from port 2222 on the host to port 22 (ssh) on the guest (VMware Fusion and Parallels Desktop only)
 1. Sharing the root folder of the Vagrant environment as '/vagrant' on the guest
 
 To re-enable the default ssh port forwarding you can add the following line to your environment's Vagrantfile:
@@ -157,6 +165,7 @@ This project was inspired by the great work of others:
 * https://github.com/boxcutter/macos
 * https://github.com/chilcote/vfuse
 * http://www.modtitan.com/2017/10/lazy-vm-building-hacks-with-autodmg-and.html
+* https://github.com/AlexanderWillner/runMacOSinVirtualBox
 
 ## Why?
 
@@ -181,18 +190,16 @@ opts = Macinbox::CLI::DEFAULT_OPTION_VALUES
 opts[:collector] = Macinbox::Collector.new
 opts[:full_name] = "Vagrant"
 opts[:password] = "vagrant"
-opts[:box_format] = "parallels"
+opts[:box_format] = "virtualbox"
 opts[:image_path] = "macinbox.dmg"
-opts[:vmdk_path] = "macinbox.vmdk"
-opts[:hdd_path] = "macinbox.hdd"
+opts[:vdi_path] = "macinbox.vdi"
 opts[:box_path] = "macinbox.box"
 opts[:boxes_dir] = File.expand_path "~/.vagrant.d"
 opts[:debug] = true
 include Macinbox::Actions
 CreateImageFromInstaller.new(opts).run
-CreateVMDKFromImage.new(opts).run
-CreateHDDFromVMDK.new(opts).run
-CreateBoxFromHDD.new(opts).run
+CreateVDIFromImage.new(opts).run
+CreateBoxFromVDI.new(opts).run
 ```
 
 To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
