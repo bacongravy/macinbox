@@ -300,9 +300,10 @@ module Macinbox
         if @short_name == "vagrant"
           Logger.info "Installing the default insecure vagrant ssh key..." do
             contents = <<~EOF
-              #!/bin/sh
-              rm /etc/rc.vagrant
               while [ ! -e /Users/vagrant ]; do
+                sleep 1
+              done
+              while [ `stat -f %u /Users/vagrant` == 0 ]; do
                 sleep 1
               done
               if [ ! -e /Users/vagrant/.ssh ]; then
