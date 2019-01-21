@@ -1,5 +1,10 @@
 ## Next version (Unreleased)
 
+BUG FIXES:
+
+- Make vagrant ssh key installation more reliable.
+- Update gemspec requirements for Mojave. [GH-17]
+
 ## 3.0.0 (December 14, 2018)
 
 FEATURES:
