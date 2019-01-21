@@ -1,4 +1,4 @@
-## Next version (Unreleased)
+## 3.1.0 (January 21, 2019)
 
 FEATURES:
 
