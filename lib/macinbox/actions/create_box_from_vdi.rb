@@ -67,8 +67,8 @@ module Macinbox
           Task.run %W[ VBoxManage setextradata macinbox GUI/ScaleFactor 2.0 ] + [task_opts] if @hidpi
           Task.run %W[ VBoxManage storagectl macinbox --name #{"SATA Controller"} --add sata --controller IntelAHCI --hostiocache on ] + [task_opts]
           Task.run %W[ VBoxManage storageattach macinbox --storagectl #{"SATA Controller"} --port 0 --device 0 --type hdd --nonrotational on --medium #{@input_vdi} ] + [task_opts]
-          Task.run %W[ VBoxManage modifyvm macinbox --boot1 disk ]
-          Task.run %W[ VBoxManage export macinbox -o #{@box_dir}/box.ovf ]
+          Task.run %W[ VBoxManage modifyvm macinbox --boot1 disk ] + [task_opts]
+          Task.run %W[ VBoxManage export macinbox -o #{@box_dir}/box.ovf ] + [task_opts]
 
         end
 

@@ -42,8 +42,9 @@ module Macinbox
         end
 
         Logger.info "Converting the image to VDI format..." do
-          Task.run %W[ VBoxManage convertfromraw #{@device} #{@temp_dir}/macinbox.vdi --format VDI ]
-          Task.run %W[ /usr/sbin/diskutil eject #{@device} ]
+          task_opts = @debug ? {} : { :out => File::NULL }
+          Task.run %W[ VBoxManage convertfromraw #{@device} #{@temp_dir}/macinbox.vdi --format VDI ] + [task_opts]
+          Task.run %W[ /usr/sbin/diskutil eject #{@device} ] + [task_opts]
           @device = nil
         end
 

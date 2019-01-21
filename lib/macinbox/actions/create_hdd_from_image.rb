@@ -102,7 +102,8 @@ module Macinbox
           FileUtils.mv "#{@temp_dir}/macinbox.hdd", @output_path
         end
 
-        Task.run %W[ /usr/sbin/diskutil eject #{@device.shellescape} ]
+        task_opts = @debug ? {} : { :out => File::NULL }
+        Task.run %W[ /usr/sbin/diskutil eject #{@device.shellescape} ] + [task_opts]
         @device = nil
 
       end

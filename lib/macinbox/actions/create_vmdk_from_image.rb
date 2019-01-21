@@ -44,13 +44,14 @@ module Macinbox
         end
 
         Logger.info "Converting the image to VMDK format..." do
+          task_opts = @debug ? {} : { :out => File::NULL }
           rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
           vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
           Dir.chdir(@temp_dir) do
-            Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ]
-            Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ]
+            Task.run %W[ #{rawdiskCreator} create #{@device} fullDevice rawdisk lsilogic ] + [task_opts]
+            Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
           end
-          Task.run %W[ /usr/sbin/diskutil eject #{@device.shellescape} ]
+          Task.run %W[ /usr/sbin/diskutil eject #{@device.shellescape} ] + [task_opts]
           @device = nil
         end
 
