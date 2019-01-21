@@ -104,6 +104,7 @@ module Macinbox
       @options[:image_path] = "macinbox.dmg"
       @options[:vmdk_path] = "macinbox.vmdk"
       @options[:hdd_path] = "macinbox.hdd"
+      @options[:vdi_path] = "macinbox.vdi"
       @options[:box_path] = "macinbox.box"
       @options[:boxes_dir] = vagrant_boxes_dir
       @options[:collector] = collector
