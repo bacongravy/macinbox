@@ -20,8 +20,8 @@ Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop', 'parall
 
 The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
 
-* [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
-* [Vagrant 2.2.2](https://www.vagrantup.com/)
+* [macOS 10.14.2 Mojave installer application](http://appstore.com/mac/macosmojave)
+* [Vagrant 2.2.3](https://www.vagrantup.com/)
 
 To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you must also have:
 
@@ -32,7 +32,7 @@ To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you 
 
 To create and boot a box in the 'parallels' format you must also have:
 
-* [Parallels Desktop 14 for Mac Pro Edition 14.0.1](https://www.parallels.com/products/desktop/)
+* [Parallels Desktop 14 for Mac Pro Edition 14.1.0](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
 
 To create and boot a box in the 'virtualbox' format you must also have:
