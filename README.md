@@ -16,26 +16,49 @@ Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop', 'parall
 * At least 2 cores (4 recommended)
 * At least 100 GB of available disk space
 
-## Dependencies
+## Additional Dependencies
 
-The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
+The following software is required. Versions other than those mentioned may work, but these are the latest versions tested.
 
-* [macOS 10.14.2 Mojave installer application](http://appstore.com/mac/macosmojave)
+### Vagrant
+
+To boot a box created by `macinbox` you will need Vagrant:
+
 * [Vagrant 2.2.3](https://www.vagrantup.com/)
 
-To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you must also have:
+### macOS Installer
+
+The create a box you will need a macOS installer application:
+
+* [macOS 10.14.2 Mojave installer application](http://appstore.com/mac/macosmojave)
+
+Previous versions of the macOS installer (e.g. High Sierra) may also work.
+
+**NOTE:** If you have questions about the permissibility of virtualizing macOS you may want to review the documentation for the virtualization software you are using and the [software license agreement](https://www.apple.com/legal/sla/) for macOS.
+
+### Virtualization Software
+
+One of the following virtualization applications is required:
+
+#### VMware Fusion
+
+To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you will need:
 
 * [VMware Fusion Pro 10.1.5](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
 
-**NOTE:** VMware Fusion Pro 11 is not yet supported; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information.
+**NOTE:** VMware Fusion Pro 11 is not yet supported for box creation; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information.
 
-To create and boot a box in the 'parallels' format you must also have:
+#### Parallels Desktop
+
+To create and boot a box in the 'parallels' format you will need:
 
 * [Parallels Desktop 14 for Mac Pro Edition 14.1.0](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
 
-To create and boot a box in the 'virtualbox' format you must also have:
+#### VirtualBox
+
+To create and boot a box in the 'virtualbox' format you will need:
 
 * [VirtualBox 6.0.2 with the extension pack](https://www.virtualbox.org)
 
