@@ -103,6 +103,7 @@ Usage: macinbox [options]
     -p, --password PASSWORD          Password of the user    (default: vagrant)
 
         --installer PATH             Path to the macOS installer app
+        --installer-dmg PATH         Path to a macOS installer app disk image
         --vmware PATH                Path to the VMware Fusion app
         --parallels PATH             Path to the Parallels Desktop app
 
@@ -141,6 +142,10 @@ By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format w
 When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
 
 When the box format is set to 'virtualbox' no guest extensions are installed. Note that some features behave differently with VirtualBox. The screen resolution is set to 1280x800 and HiDPI resolutions are not supported. The GUI scale factor is set to 2.0 (so that the VM displays properly on a host with a retina display) unless the `--no-hidpi` option is used. Lastly, ssh port-forwarding is enabled by default so that the host can connect to the guest.
+
+## Installer Disk Image Support
+
+The `--installer-dmg` option allows you to indicate the path to a disk image containing a macOS installer, and overrides the `--installer` option. The specified disk image should not already be mounted; `macinbox` will mount and unmount it as needed. This feature allows you to use the installer disk images created by [installinstallmacos.py](https://github.com/munki/macadmin-scripts/blob/master/installinstallmacos.py) as part of the `macinbox` workflow.
 
 ## Implementation Details
 
@@ -249,7 +254,6 @@ opts[:box_path] = "virtualbox.box"
 CreateBoxFromVDI.new(opts).run
 InstallBox.new(opts).run
 
-opts[:collector].on_cleanup { opts[:collector].remove_temp_dirs }
 opts[:collector].cleanup!
 ```
 

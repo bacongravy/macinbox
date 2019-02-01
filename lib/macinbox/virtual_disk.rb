@@ -30,6 +30,11 @@ module Macinbox
       @volume_device = nil
     end
 
+    def mountpoint
+      disk_info = Task.backtick %W[ /usr/sbin/diskutil info #{@volume_device} ]
+      disk_info[/Mount Point:\s+(.*)/, 1]
+    end
+
     def create_from_folder(srcfolder)
       Task.run %W[ /usr/bin/hdiutil create -srcfolder #{srcfolder} #{@image} ] + @quiet_flag
     end

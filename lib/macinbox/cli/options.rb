@@ -46,6 +46,7 @@ module Macinbox
         o.on('-p', '--password PASSWORD',  'Password of the user    (default: vagrant)')  { |v| @options[:password] = v }
         o.separator ''
         o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = v }
+        o.on(      '--installer-dmg PATH', 'Path to a macOS installer app disk image')    { |v| @options[:installer_dmg] = v }
         o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = v }
         o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = v }
         o.separator ''

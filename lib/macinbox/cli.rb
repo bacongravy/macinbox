@@ -8,6 +8,7 @@ require "macinbox/collector"
 require 'macinbox/error'
 require 'macinbox/logger'
 require 'macinbox/tty'
+require 'macinbox/virtual_disk'
 
 module Macinbox
 
@@ -28,6 +29,25 @@ module Macinbox
       parse_options(argv)
 
       check_for_sudo_root
+
+      collector = Collector.new(preserve_temp_dirs: @options[:debug])
+
+      collector.on_cleanup do
+        STDERR.print TTY::Color::RESET
+        STDERR.print TTY::Cursor::NORMAL
+      end
+
+      if @options[:installer_dmg]
+        if !File.exists?(@options[:installer_dmg])
+          raise Macinbox::Error.new("Installer disk image not found: #{@options[:installer_dmg]}")
+        end
+        Logger.info "Attaching installer disk image..."
+        installer_disk = VirtualDisk.new(@options[:installer_dmg], @options[:debug])
+        collector.on_cleanup { installer_disk.detach! }
+        installer_disk.attach
+        installer_disk.mount
+        @options[:installer_path] = Dir[installer_disk.mountpoint+'/*.app'].first
+      end
 
       if not File.exists? @options[:installer_path]
         raise Macinbox::Error.new("Installer app not found: #{@options[:installer_path]}")
@@ -72,22 +92,8 @@ module Macinbox
       root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root_temp ]
       user_temp_dir = Task.backtick %W[ /usr/bin/sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user_temp ]
 
-      collector = Collector.new
-
       collector.add_temp_dir root_temp_dir
       collector.add_temp_dir user_temp_dir
-
-      collector.on_cleanup do
-        if @options[:debug]
-          temp_dir_args = collector.temp_dirs.reverse.map { |o| o.shellescape }.join(" \\\n")
-          Logger.error "WARNING: Temporary files were not removed. Run this command to remove them:"
-          Logger.error "sudo rm -rf #{temp_dir_args}"
-        else
-          collector.remove_temp_dirs
-        end
-        STDERR.print TTY::Color::RESET
-        STDERR.print TTY::Cursor::NORMAL
-      end
 
       ["TERM", "INT", "EXIT"].each do |signal|
         trap signal do

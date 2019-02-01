@@ -74,7 +74,7 @@ module Macinbox
           @wrapper_disk.create_from_folder(@installer_app)
           @wrapper_disk.attach
           @wrapper_disk.mount
-          @installer_app = "/Volumes/#{File.basename @installer_app, ".app"}/#{File.basename @installer_app}"
+          @installer_app = "#{@wrapper_disk.mountpoint}/#{File.basename @installer_app}"
         end
       end
 

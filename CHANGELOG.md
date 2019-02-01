@@ -2,13 +2,14 @@
 
 FEATURES:
 
-- Add --use-qemu flag to support building vmware_desktop boxes with qemu-img. [GH-12]
+- Add --use-qemu option to support building vmware_desktop boxes with qemu-img. [GH-12]
+- Add --installer-dmg option to support using installers wrapped in disk images. [GH-21]
 
 IMPROVEMENTS:
 
 - Use clonefile (`cp -c`) to copy files faster.
 - Use the detected OS version as the box version.
-- Skip creation of the wrapper image if the installer app is already wrapped. [GH-21]
+- Skip creation of the wrapper image when it isn't necessary. [GH-21]
 
 ## 3.1.0 (January 21, 2019)
 
