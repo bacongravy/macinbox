@@ -4,6 +4,7 @@ IMPROVEMENTS:
 
 - Use clonefile (`cp -c`) to copy files faster.
 - Use the detected OS version as the box version.
+- Skip creation of the wrapper image if the installer app is already wrapped. [GH-21]
 
 ## 3.1.0 (January 21, 2019)
 

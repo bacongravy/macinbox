@@ -41,7 +41,9 @@ module Macinbox
 
       def run
         create_temp_dir
-        create_wrapper_image
+        if installer_is_on_root_filesystem
+          create_wrapper_image
+        end
         create_scratch_image
         install_macos
         create_rc_vagrant
@@ -58,15 +60,21 @@ module Macinbox
         @collector.add_temp_dir @temp_dir
       end
 
+      def installer_is_on_root_filesystem
+        root_device = Task.backtick %W[ /usr/bin/stat -f %d / ]
+        installer_device = Task.backtick %W[ /usr/bin/stat -f %d #{@installer_app} ]
+        root_device == installer_device
+      end
+
       def create_wrapper_image
         Logger.info "Creating and attaching wrapper disk image..." do
           @wrapper_image = "#{@temp_dir}/wrapper.dmg"
           @wrapper_disk = VirtualDisk.new(@wrapper_image, @debug)
           @collector.on_cleanup { @wrapper_disk.detach! }
-          @wrapper_mountpoint = "/Volumes/#{File.basename @installer_app, ".app"}"
           @wrapper_disk.create_from_folder(@installer_app)
           @wrapper_disk.attach
           @wrapper_disk.mount
+          @installer_app = "/Volumes/#{File.basename @installer_app, ".app"}/#{File.basename @installer_app}"
         end
       end
 
@@ -86,14 +94,14 @@ module Macinbox
       def install_macos
         Logger.info "Installing macOS..." do
           activity = Logger.prefix + "installer"
-          install_info_plist = "#{@wrapper_mountpoint}/#{File.basename @installer_app}/Contents/SharedSupport/InstallInfo.plist"
+          install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
           Task.run %W[ /usr/bin/touch #{@scratch_mountpoint}/.macinbox ]
           cmd = %W[ /usr/sbin/installer -verboseR -dumplog -pkg #{install_info_plist} -target #{@scratch_mountpoint} ]
           opts = @debug ? {} : { :err => [:child, :out] }
           Task.run_with_progress activity, cmd, opts do |line|
             /^installer:%(.*)$/.match(line)[1].to_f rescue nil
           end
-          @wrapper_disk.detach!
+          @wrapper_disk.detach! if @wrapper_disk
         end
       end
 
