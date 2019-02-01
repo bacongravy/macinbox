@@ -213,16 +213,42 @@ opts = Macinbox::CLI::DEFAULT_OPTION_VALUES
 opts[:collector] = Macinbox::Collector.new
 opts[:full_name] = "Vagrant"
 opts[:password] = "vagrant"
-opts[:box_format] = "virtualbox"
-opts[:image_path] = "macinbox.dmg"
-opts[:vdi_path] = "macinbox.vdi"
-opts[:box_path] = "macinbox.box"
-opts[:boxes_dir] = File.expand_path "~/.vagrant.d"
+opts[:image_path] = "macinbox.sparseimage"
+opts[:boxes_dir] = File.expand_path "~/.vagrant.d/boxes"
 opts[:debug] = true
+
 include Macinbox::Actions
+
+opts[:macos_version] = CheckMacosVersions.new(opts).run
+
 CreateImageFromInstaller.new(opts).run
+
+opts[:vmdk_path] = "macinbox.vmdk"
+CreateVMDKFromImage.new(opts).run
+
+opts[:box_format] = "vmware_desktop"
+opts[:box_path] = "vmware_desktop.box"
+CreateBoxFromVMDK.new(opts).run
+InstallBox.new(opts).run
+
+opts[:hdd_path] = "macinbox.hdd"
+CreateHDDFromImage.new(opts).run
+
+opts[:box_format] = "parallels"
+opts[:box_path] = "parallels.box"
+CreateBoxFromHDD.new(opts).run
+InstallBox.new(opts).run
+
+opts[:vdi_path] = "macinbox.vdi"
 CreateVDIFromImage.new(opts).run
+
+opts[:box_format] = "virtualbox"
+opts[:box_path] = "virtualbox.box"
 CreateBoxFromVDI.new(opts).run
+InstallBox.new(opts).run
+
+opts[:collector].on_cleanup { opts[:collector].remove_temp_dirs }
+opts[:collector].cleanup!
 ```
 
 To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).

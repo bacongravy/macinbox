@@ -1,3 +1,4 @@
+require "macinbox/actions/check_macos_versions"
 require "macinbox/actions/create_box_from_hdd"
 require "macinbox/actions/create_box_from_vdi"
 require "macinbox/actions/create_box_from_vmdk"

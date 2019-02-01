@@ -66,7 +66,7 @@ module Macinbox
       end
 
       root_temp_dir = Task.backtick %W[ /usr/bin/mktemp -d -t macinbox_root_temp ]
-      user_temp_dir = Task.backtick %W[ sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user_temp ]
+      user_temp_dir = Task.backtick %W[ /usr/bin/sudo -u #{ENV["SUDO_USER"]} /usr/bin/mktemp -d -t macinbox_user_temp ]
 
       collector = Collector.new
 
@@ -101,7 +101,7 @@ module Macinbox
         end
       end
 
-      @options[:image_path] = "macinbox.dmg"
+      @options[:image_path] = "macinbox.sparseimage"
       @options[:vmdk_path] = "macinbox.vmdk"
       @options[:hdd_path] = "macinbox.hdd"
       @options[:vdi_path] = "macinbox.vdi"
@@ -110,6 +110,10 @@ module Macinbox
       @options[:collector] = collector
 
       Dir.chdir(root_temp_dir) do
+
+        Logger.info "Checking macOS versions..." do
+          @options[:macos_version] = Actions::CheckMacosVersions.new(@options).run
+        end
 
         Logger.info "Creating image from installer..." do
           Actions::CreateImageFromInstaller.new(@options).run

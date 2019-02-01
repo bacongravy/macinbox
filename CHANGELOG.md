@@ -1,5 +1,10 @@
 ## Next version (Unreleased)
 
+IMPROVEMENTS:
+
+- Use clonefile (`cp -c`) to copy files faster
+- Use the detected OS version as the box version
+
 ## 3.1.0 (January 21, 2019)
 
 FEATURES:
