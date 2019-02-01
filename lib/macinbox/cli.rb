@@ -49,6 +49,10 @@ module Macinbox
         raise Macinbox::Error.new("VBoxManage not found: /usr/local/bin/VBoxManage")
       end
 
+      if @options[:use_qemu] && !File.exists?('/usr/local/bin/qemu-img')
+        raise Macinbox::Error.new("QEMU not found: /usr/local/bin/qemu-img")
+      end
+
       vagrant_home = ENV["VAGRANT_HOME"]
 
       if vagrant_home.nil? or vagrant_home.empty?
