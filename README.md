@@ -132,7 +132,7 @@ If you have the VAGRANT_HOME environment variable set and want the created box t
 
 ## Retina Display and HiDPI Support
 
-By default `macinbox` will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the `--no-hidpi` option.
+By default `macinbox` will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution. You can disable this behavior using the `--no-hidpi` option.
 
 ## Box Format Support
 
