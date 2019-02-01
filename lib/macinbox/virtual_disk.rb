@@ -38,6 +38,10 @@ module Macinbox
       Task.run %W[ /usr/bin/hdiutil create -size #{disk_size}g -type SPARSE -fs #{fstype} -volname #{"Macintosh HD"} -uid 0 -gid 80 -mode 1775 #{@image} ] + @quiet_flag
     end
 
+    def convert(format: 'UDZO', outfile:)
+      Task.run %W[ /usr/bin/hdiutil convert -format #{format} -o #{outfile} #{@image} ] + @quiet_flag
+    end
+
     def attach
       set_devices(Task.backtick %W[ /usr/bin/hdiutil attach #{@image} -nomount ])
     end

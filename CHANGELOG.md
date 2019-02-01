@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+FEATURES:
+
+- Add --use-qemu flag to support building vmware_desktop boxes with qemu-img. [GH-12]
+
 IMPROVEMENTS:
 
 - Use clonefile (`cp -c`) to copy files faster.

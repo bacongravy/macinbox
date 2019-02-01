@@ -17,12 +17,17 @@ module Macinbox
         @input_image       = opts[:image_path]  or raise ArgumentError.new(":image_path not specified")
         @output_path       = opts[:vmdk_path]   or raise ArgumentError.new(":vmdk_path not specified")
         @vmware_fusion_app = opts[:vmware_path] or raise ArgumentError.new(":vmware_path not specified")
+        @use_qemu          = opts[:use_qemu]
 
         @collector         = opts[:collector]   or raise ArgumentError.new(":collector not specified")
         @debug             = opts[:debug]
 
         raise Macinbox::Error.new("input image not found")   unless File.exist? @input_image
         raise Macinbox::Error.new("VMware Fusion not found") unless File.exist? @vmware_fusion_app
+
+        if @use_qemu
+          raise Macinbox::Error.new("qemu-img not found") unless File.exist? "/usr/local/bin/qemu-img"
+        end
       end
 
       def run
@@ -31,7 +36,7 @@ module Macinbox
         attach_image
         install_vmware_tools
         set_spc_kextpolicy
-        eject_and_reattach_image
+        eject_image
         convert_image
         save_image
       end
@@ -114,23 +119,26 @@ module Macinbox
         end
       end
 
-      def eject_and_reattach_image
-        Logger.info "Reattaching the image..." do
-          @disk.eject
-          @disk.attach
-        end
+      def eject_image
+        @disk.eject
       end
 
       def convert_image
-        Logger.info "Converting the image to VMDK format..." do
-          task_opts = @debug ? {} : { :out => File::NULL }
-          rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
-          vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
-          Dir.chdir(@temp_dir) do
-            Task.run %W[ #{rawdiskCreator} create #{@disk.device} fullDevice rawdisk lsilogic ] + [task_opts]
-            Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
+        Logger.info "Converting the image to VMDK format#{@use_qemu ? " using QEMU" : ""}..." do
+          if @use_qemu
+            @disk.convert(outfile: "#{@temp_dir}/macinbox.dmg")
+            Task.run %W[ /usr/local/bin/qemu-img convert -f dmg -O vmdk #{@temp_dir}/macinbox.dmg #{@temp_dir}/macinbox.vmdk ]
+          else
+            @disk.attach
+            task_opts = @debug ? {} : { :out => File::NULL }
+            rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
+            vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
+            Dir.chdir(@temp_dir) do
+              Task.run %W[ #{rawdiskCreator} create #{@disk.device} fullDevice rawdisk lsilogic ] + [task_opts]
+              Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
+            end
+            @disk.eject
           end
-          @disk.eject
         end
       end
 

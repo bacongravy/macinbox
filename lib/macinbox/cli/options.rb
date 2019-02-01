@@ -23,6 +23,7 @@ module Macinbox
       :hidpi           => true,
       :fullscreen      => true,
       :gui             => true,
+      :use_qemu        => false,
       :debug           => false,
     }
 
@@ -53,6 +54,8 @@ module Macinbox
         o.on(      '--no-hidpi',           'Disable HiDPI resolutions')                   { |v| @options[:hidpi] = v }
         o.on(      '--no-fullscreen',      'Display the virtual machine GUI in a window') { |v| @options[:fullsceen] = v }
         o.on(      '--no-gui',             'Disable the GUI')                             { |v| @options[:gui] = v }
+        o.separator ''
+        o.on(      '--use-qemu',           'Use qemu-img (vmware_desktop only)')          { |v| @options[:use_qemu] = v }
         o.separator ''
         o.on(      '--debug',              'Enable debug mode')                           { |v| @options[:debug] = v }
         o.separator ''
