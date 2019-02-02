@@ -28,7 +28,7 @@ To boot a box created by `macinbox` you will need Vagrant:
 
 ### macOS Installer
 
-The create a box you will need a macOS installer application:
+To create a box you will need a macOS installer application:
 
 * [macOS 10.14.3 Mojave installer application](http://appstore.com/mac/macosmojave)
 
