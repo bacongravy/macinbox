@@ -65,12 +65,12 @@ module Macinbox
       Task.run %W[ /usr/sbin/diskutil unmount #{@efi_device} ] + @task_opts
     end
 
-    def detach
+    def eject
       max_attempts = 5
       for attempt in 1..max_attempts
         begin
-          Logger.info "Detaching the image..." if @debug
-          Task.run %W[ /usr/bin/hdiutil detach #{@disk_device} ] + @quiet_flag
+          quiet = @debug ? [] : %W[ quiet ]
+          Task.run %W[ /usr/sbin/diskutil ] + quiet + %W[ eject #{@disk_device} ] + @task_opts
           unset_devices
           break
         rescue Macinbox::Error => error
@@ -79,11 +79,6 @@ module Macinbox
           sleep 15
         end
       end
-    end
-
-    def eject
-      Task.run %W[ /usr/sbin/diskutil eject #{@disk_device} ] + @task_opts
-      unset_devices
     end
 
     def detach!

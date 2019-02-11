@@ -216,7 +216,7 @@ module Macinbox
 
       def save_image
         Logger.info "Saving the image..." do
-          @scratch_disk.detach
+          @scratch_disk.eject
           FileUtils.chown ENV["SUDO_USER"], nil, @scratch_image
           FileUtils.mv @scratch_image, @output_path
         end
