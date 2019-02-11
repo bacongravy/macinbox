@@ -106,6 +106,7 @@ Usage: macinbox [options]
         --installer-dmg PATH         Path to a macOS installer app disk image
         --vmware PATH                Path to the VMware Fusion app
         --parallels PATH             Path to the Parallels Desktop app
+        --user-script PATH           Path to user script
 
         --no-auto-login              Disable auto login
         --no-skip-mini-buddy         Show the mini buddy on first login
@@ -143,6 +144,10 @@ By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format w
 When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
 
 When the box format is set to 'virtualbox' no guest extensions are installed. Note that some features behave differently with VirtualBox. The screen resolution is set to 1280x800 and HiDPI resolutions are not supported. The GUI scale factor is set to 2.0 (so that the VM displays properly on a host with a retina display) unless the `--no-hidpi` option is used. Lastly, ssh port-forwarding is enabled by default so that the host can connect to the guest.
+
+## User scripts
+
+If additional box customization is required a user script may be specified using the `--user-script` option. The script is run after the OS has been installed and will be provided with the path to the install location as its first and only argument. The script must be executable and exit with code zero or the box creation will be aborted.
 
 ## Installer Disk Image Support
 

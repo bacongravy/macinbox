@@ -3,6 +3,7 @@
 FEATURES:
 
 - Add --verbose option to show the commands being run. [GH-28]
+- Add --user-script option to support running user-provided customizations. [GH-24]
 
 ## 3.2.0 (February 2, 2019)
 

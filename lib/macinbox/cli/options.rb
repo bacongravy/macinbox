@@ -46,10 +46,11 @@ module Macinbox
         o.on('-f', '--full NAME',          'Full name of the user   (default: Vagrant)')  { |v| @options[:full_name] = v }
         o.on('-p', '--password PASSWORD',  'Password of the user    (default: vagrant)')  { |v| @options[:password] = v }
         o.separator ''
-        o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = v }
-        o.on(      '--installer-dmg PATH', 'Path to a macOS installer app disk image')    { |v| @options[:installer_dmg] = v }
-        o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = v }
-        o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = v }
+        o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = File.absolute_path(v) }
+        o.on(      '--installer-dmg PATH', 'Path to a macOS installer app disk image')    { |v| @options[:installer_dmg] = File.absolute_path(v) }
+        o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = File.absolute_path(v) }
+        o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = File.absolute_path(v) }
+        o.on(      '--user-script PATH',   'Path to user script')                         { |v| @options[:user_script] = File.absolute_path(v) }
         o.separator ''
         o.on(      '--no-auto-login',      'Disable auto login')                          { |v| @options[:auto_login] = v }
         o.on(      '--no-skip-mini-buddy', 'Show the mini buddy on first login')          { |v| @options[:skip_mini_buddy] = v }

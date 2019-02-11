@@ -18,6 +18,7 @@ module Macinbox
         @output_path       = opts[:image_path]      or raise ArgumentError.new(":image_path not specified")
         @vmware_fusion_app = opts[:vmware_path]
         @parallels_app     = opts[:parallels_path]
+        @user_script       = opts[:user_script]
 
         @disk_size         = opts[:disk_size]       or raise ArgumentError.new(":disk_size not specified")
         @fstype            = opts[:fstype]          or raise ArgumentError.new(":fstype not specified")
@@ -51,6 +52,7 @@ module Macinbox
         enable_passwordless_sudo
         enable_sshd
         enable_hidpi
+        run_user_script
         save_image
       end
 
@@ -194,7 +196,6 @@ module Macinbox
         end
       end
 
-
       def enable_hidpi
         if @hidpi
           Logger.info "Enabling HiDPI resolutions..." do
@@ -209,6 +210,14 @@ module Macinbox
               </dict>
               </plist>
             EOF
+          end
+        end
+      end
+
+      def run_user_script
+        if @user_script
+          Logger.info "Running user script..." do
+            Task.run %W[ #{@user_script} #{@scratch_mountpoint} ]
           end
         end
       end
