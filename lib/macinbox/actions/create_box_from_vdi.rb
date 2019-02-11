@@ -24,7 +24,6 @@ module Macinbox
         @hidpi             = opts[:hidpi]
 
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("VDI not found") unless File.exist? @input_vdi
       end
@@ -53,7 +52,7 @@ module Macinbox
             end
           EOF
 
-          task_opts = @debug ? {} : { :out => File::NULL }
+          task_opts = $verbose ? {} : { :out => File::NULL }
 
           Task.run %W[ VBoxManage createvm --register --name macinbox --ostype MacOS1013_64 ] + [task_opts]
 

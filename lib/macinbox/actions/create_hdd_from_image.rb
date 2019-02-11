@@ -19,7 +19,6 @@ module Macinbox
         @parallels_app     = opts[:parallels_path] or raise ArgumentError.new(":parallels_path not specified")
 
         @collector         = opts[:collector]      or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("input image not found")       unless File.exist? @input_image
         raise Macinbox::Error.new("Parallels Desktop not found") unless File.exist? @parallels_app
@@ -49,7 +48,7 @@ module Macinbox
 
       def attach_image
         Logger.info "Attaching the image..." do
-          @disk = VirtualDisk.new(@image, @debug)
+          @disk = VirtualDisk.new(@image)
           @collector.on_cleanup { @disk.detach! }
           @image_mountpoint = "#{@temp_dir}/image_mountpoint"
           FileUtils.mkdir @image_mountpoint
@@ -64,7 +63,7 @@ module Macinbox
 
           tools_image = "#{@parallels_app}/Contents/Resources/Tools/prl-tools-mac.iso"
 
-          tools_disk = VirtualDisk.new(tools_image, @debug)
+          tools_disk = VirtualDisk.new(tools_image)
 
           @collector.on_cleanup { tools_disk.detach! }
 
@@ -171,7 +170,7 @@ module Macinbox
             EOF
 
             prl_convert = "#{@parallels_app}/Contents/MacOS/prl_convert"
-            task_opts = @debug ? {} : { :out => File::NULL }
+            task_opts = $verbose ? {} : { :out => File::NULL }
             Task.run %W[ #{prl_convert} #{@temp_dir}/macinbox.vmdk --allow-no-os --dst=#{@temp_dir} ] + [task_opts]
             @disk.eject
           end

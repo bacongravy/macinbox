@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+FEATURES:
+
+- Add --verbose option to show the commands being run. [GH-28]
+
 ## 3.2.0 (February 2, 2019)
 
 FEATURES:

@@ -26,7 +26,6 @@ module Macinbox
         @hidpi             = opts[:hidpi]
 
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("VMDK not found") unless File.exist? @input_vmdk
         raise Macinbox::Error.new("Box format not supported: #{@box_format}") unless ["vmware_fusion", "vmware_desktop"].include? @box_format

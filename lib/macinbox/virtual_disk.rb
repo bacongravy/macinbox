@@ -6,11 +6,10 @@ module Macinbox
 
   class VirtualDisk
 
-    def initialize(image, debug)
+    def initialize(image)
       @image = image
-      @debug = debug
-      @quiet_flag = @debug ? [] : %W[ -quiet ]
-      @task_opts = @debug ? [] : [{ :out => File::NULL }]
+      @quiet_flag = $verbose ? [] : %W[ -quiet ]
+      @task_opts = $verbose ? [] : [{ :out => File::NULL }]
     end
 
     def device
@@ -69,13 +68,13 @@ module Macinbox
       max_attempts = 5
       for attempt in 1..max_attempts
         begin
-          quiet = @debug ? [] : %W[ quiet ]
+          quiet = $verbose ? [] : %W[ quiet ]
           Task.run %W[ /usr/sbin/diskutil ] + quiet + %W[ eject #{@disk_device} ] + @task_opts
           unset_devices
           break
         rescue Macinbox::Error => error
           raise if attempt == max_attempts
-          Logger.info "#{error.message}. Sleeping and retrying..." if @debug
+          Logger.info "Eject failed: #{error.message}. Sleeping and retrying..." if $verbose
           sleep 15
         end
       end

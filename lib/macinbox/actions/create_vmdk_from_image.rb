@@ -20,7 +20,6 @@ module Macinbox
         @use_qemu          = opts[:use_qemu]
 
         @collector         = opts[:collector]   or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("input image not found")   unless File.exist? @input_image
         raise Macinbox::Error.new("VMware Fusion not found") unless File.exist? @vmware_fusion_app
@@ -55,7 +54,7 @@ module Macinbox
 
       def attach_image
         Logger.info "Attaching the image..." do
-          @disk = VirtualDisk.new(@image, @debug)
+          @disk = VirtualDisk.new(@image)
           @collector.on_cleanup { @disk.detach! }
           @image_mountpoint = "#{@temp_dir}/image_mountpoint"
           FileUtils.mkdir @image_mountpoint
@@ -73,16 +72,16 @@ module Macinbox
             bundle_short_version = Task.backtick %W[ defaults read #{"/Applications/VMware Fusion.app/Contents/Info.plist"} CFBundleShortVersionString ]
             darwin_iso_url = "http://softwareupdate.vmware.com/cds/vmw-desktop/fusion/#{bundle_short_version}/#{bundle_version}/packages/com.vmware.fusion.tools.darwin.zip.tar"
             Dir.chdir(@temp_dir) do
-              Task.run %W[ /usr/bin/curl #{darwin_iso_url} -O ] + (@debug ? [] : %W[ -s -S ])
+              Task.run %W[ /usr/bin/curl #{darwin_iso_url} -O ] + ($verbose ? [] : %W[ -s -S ])
               Task.run %W[ /usr/bin/tar -xf com.vmware.fusion.tools.darwin.zip.tar com.vmware.fusion.tools.darwin.zip ]
-              Task.run %W[ /usr/bin/unzip ] + (@debug ? [] : %W[ -qq ]) + %W[ com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
+              Task.run %W[ /usr/bin/unzip ] + ($verbose ? [] : %W[ -qq ]) + %W[ com.vmware.fusion.tools.darwin.zip payload/darwin.iso ]
             end
             tools_image = "#{@temp_dir}/payload/darwin.iso"
           end
         end
 
         Logger.info "Installing the VMware Tools..." do
-          tools_disk = VirtualDisk.new(tools_image, @debug)
+          tools_disk = VirtualDisk.new(tools_image)
           @collector.on_cleanup { tools_disk.detach! }
           tools_mountpoint = "#{@temp_dir}/tools_mountpoint"
           FileUtils.mkdir tools_mountpoint
@@ -130,7 +129,7 @@ module Macinbox
             Task.run %W[ /usr/local/bin/qemu-img convert -f dmg -O vmdk #{@temp_dir}/macinbox.dmg #{@temp_dir}/macinbox.vmdk ]
           else
             @disk.attach
-            task_opts = @debug ? {} : { :out => File::NULL }
+            task_opts = $verbose ? {} : { :out => File::NULL }
             rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
             vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
             Dir.chdir(@temp_dir) do

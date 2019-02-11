@@ -31,7 +31,6 @@ module Macinbox
         @hidpi             = opts[:hidpi]
 
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("Installer app not found") unless File.exist? @installer_app
 
@@ -69,7 +68,7 @@ module Macinbox
       def create_wrapper_image
         Logger.info "Creating and attaching wrapper disk image..." do
           @wrapper_image = "#{@temp_dir}/wrapper.dmg"
-          @wrapper_disk = VirtualDisk.new(@wrapper_image, @debug)
+          @wrapper_disk = VirtualDisk.new(@wrapper_image)
           @collector.on_cleanup { @wrapper_disk.detach! }
           @wrapper_disk.create_from_folder(@installer_app)
           @wrapper_disk.attach
@@ -81,7 +80,7 @@ module Macinbox
       def create_scratch_image
         Logger.info "Creating and attaching a new blank disk image..." do
           @scratch_image = "#{@temp_dir}/scratch.sparseimage"
-          @scratch_disk = VirtualDisk.new(@scratch_image, @debug)
+          @scratch_disk = VirtualDisk.new(@scratch_image)
           @collector.on_cleanup { @scratch_disk.detach! }
           @scratch_mountpoint = "#{@temp_dir}/scratch_mountpoint"
           FileUtils.mkdir @scratch_mountpoint
@@ -97,7 +96,7 @@ module Macinbox
           install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
           Task.run %W[ /usr/bin/touch #{@scratch_mountpoint}/.macinbox ]
           cmd = %W[ /usr/sbin/installer -verboseR -dumplog -pkg #{install_info_plist} -target #{@scratch_mountpoint} ]
-          opts = @debug ? {} : { :err => [:child, :out] }
+          opts = $verbose ? {} : { :err => [:child, :out] }
           Task.run_with_progress activity, cmd, opts do |line|
             /^installer:%(.*)$/.match(line)[1].to_f rescue nil
           end
@@ -190,7 +189,7 @@ module Macinbox
       def enable_sshd
         Logger.info "Enabling sshd..." do
           scratch_launchd_disabled_plist = "#{@scratch_mountpoint}/private/var/db/com.apple.xpc.launchd/disabled.plist"
-          opts = @debug ? {} : { :out => File::NULL }
+          opts = $verbose ? {} : { :out => File::NULL }
           Task.run %W[ /usr/libexec/PlistBuddy -c #{'Add :com.openssh.sshd bool False'} #{scratch_launchd_disabled_plist} ] + [opts]
         end
       end

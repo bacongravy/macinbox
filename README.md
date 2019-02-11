@@ -115,6 +115,7 @@ Usage: macinbox [options]
 
         --use-qemu                   Use qemu-img (vmware_desktop only)
 
+        --verbose                    Enable verbose mode
         --debug                      Enable debug mode
 
     -v, --version

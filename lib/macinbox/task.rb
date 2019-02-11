@@ -2,15 +2,19 @@ require 'macinbox/error'
 require 'macinbox/logger'
 require 'macinbox/tty'
 
+require 'shellwords'
+
 module Macinbox
 
   class Task
 
     def self.run(cmd)
+      Logger.info "Running command: #{Shellwords.join(cmd)}" if $verbose
       system(*cmd) or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$? >> 8}")
     end
 
     def self.run_as_sudo_user(cmd)
+      Logger.info "Running command: sudo -u #{ENV["SUDO_USER"]} #{Shellwords.join(cmd)}" if $verbose
       system "sudo", "-u", ENV["SUDO_USER"], *cmd or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$?.to_i}")
     end
 
@@ -33,6 +37,7 @@ module Macinbox
     def self.run_with_progress(activity, cmd, opts={})
       STDERR.print TTY::Cursor::INVISIBLE
       STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, 0.0) + TTY::Color::RESET
+      Logger.info "Running command: #{Shellwords.join(cmd)}" if $verbose
       IO.popen cmd, opts do |pipe|
         pipe.each_line do |line|
           percent = yield line
@@ -66,10 +71,12 @@ module Macinbox
     end
 
     def self.backtick(cmd)
+      Logger.info "Running command: #{Shellwords.join(cmd)}" if $verbose
       IO.popen(cmd).read.chomp
     end
 
     def self.run_with_input(cmd)
+      Logger.info "Running command: #{Shellwords.join(cmd)}" if $verbose
       IO.popen(cmd, "w") do |pipe|
         yield pipe
       end

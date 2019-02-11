@@ -18,7 +18,6 @@ module Macinbox
         @output_path       = opts[:vdi_path]    or raise ArgumentError.new(":vdi_path not specified")
 
         @collector         = opts[:collector]   or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("input image not found")   unless File.exist? @input_image
       end
@@ -46,7 +45,7 @@ module Macinbox
 
       def attach_image
         Logger.info "Attaching the image..." do
-          @disk = VirtualDisk.new(@image, @debug)
+          @disk = VirtualDisk.new(@image)
           @collector.on_cleanup { @disk.detach! }
           @disk.attach
         end
@@ -80,7 +79,7 @@ module Macinbox
 
       def convert_image
         Logger.info "Converting the image to VDI format..." do
-          task_opts = @debug ? {} : { :out => File::NULL }
+          task_opts = $verbose ? {} : { :out => File::NULL }
           Task.run %W[ VBoxManage convertfromraw #{@disk.device} #{@temp_dir}/macinbox.vdi --format VDI ] + [task_opts]
         end
       end

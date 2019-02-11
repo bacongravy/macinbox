@@ -30,7 +30,7 @@ module Macinbox
 
       check_for_sudo_root
 
-      collector = Collector.new(preserve_temp_dirs: @options[:debug])
+      collector = Collector.new(preserve_temp_dirs: $debug)
 
       collector.on_cleanup do
         STDERR.print TTY::Color::RESET
@@ -42,7 +42,7 @@ module Macinbox
           raise Macinbox::Error.new("Installer disk image not found: #{@options[:installer_dmg]}")
         end
         Logger.info "Attaching installer disk image..."
-        installer_disk = VirtualDisk.new(@options[:installer_dmg], @options[:debug])
+        installer_disk = VirtualDisk.new(@options[:installer_dmg])
         collector.on_cleanup { installer_disk.detach! }
         installer_disk.attach
         installer_disk.mount

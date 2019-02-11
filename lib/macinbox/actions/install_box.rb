@@ -18,7 +18,6 @@ module Macinbox
         @boxes_dir   = opts[:boxes_dir]  or raise ArgumentError.new(":boxes_dir not specified")
 
         @box_version = opts[:macos_version]
-        @debug       = opts[:debug]
 
         raise Macinbox::Error.new("box not found: #{@input_box}") unless File.exist? @input_box
         raise Macinbox::Error.new("boxes directory not found: #{@boxes_dir}") unless File.exist? @boxes_dir

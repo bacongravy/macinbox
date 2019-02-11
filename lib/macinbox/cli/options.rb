@@ -24,6 +24,7 @@ module Macinbox
       :fullscreen      => true,
       :gui             => true,
       :use_qemu        => false,
+      :verbose         => false,
       :debug           => false,
     }
 
@@ -58,7 +59,8 @@ module Macinbox
         o.separator ''
         o.on(      '--use-qemu',           'Use qemu-img (vmware_desktop only)')          { |v| @options[:use_qemu] = v }
         o.separator ''
-        o.on(      '--debug',              'Enable debug mode')                           { |v| @options[:debug] = v }
+        o.on(      '--verbose',            'Enable verbose mode')                         { |v| $verbose = v }
+        o.on(      '--debug',              'Enable debug mode')                           { |v| $debug = $verbose = v }
         o.separator ''
         o.on('-v', '--version')                                                           { puts "macinbox #{Macinbox::VERSION}"; exit }
         o.on('-h', '--help')                                                              { puts o; exit }
