@@ -101,17 +101,26 @@ module Macinbox
       def set_spc_kextpolicy
         Logger.info "Setting the KextPolicy to allow loading the VMware kernel extensions..." do
           image_spc_kextpolicy = "#{@image_mountpoint}/private/var/db/SystemPolicyConfiguration/KextPolicy"
+          unless File.exist? image_spc_kextpolicy
+            Task.run_with_input %W[ /usr/bin/sqlite3 #{image_spc_kextpolicy} ] do |pipe|
+              pipe.write <<~EOF
+                PRAGMA foreign_keys=OFF;
+                BEGIN TRANSACTION;
+                CREATE TABLE kext_load_history_v3 ( path TEXT PRIMARY KEY, team_id TEXT, bundle_id TEXT, boot_uuid TEXT, created_at TEXT, last_seen TEXT, flags INTEGER );
+                CREATE TABLE kext_policy ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, developer_name TEXT, flags INTEGER, PRIMARY KEY (team_id, bundle_id) );
+                CREATE TABLE kext_policy_mdm ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, payload_uuid TEXT, PRIMARY KEY (team_id, bundle_id) );
+                CREATE TABLE settings ( name TEXT, value TEXT, PRIMARY KEY (name) );
+                COMMIT;
+              EOF
+            end
+          end
           Task.run_with_input %W[ /usr/bin/sqlite3 #{image_spc_kextpolicy} ] do |pipe|
             pipe.write <<~EOF
               PRAGMA foreign_keys=OFF;
               BEGIN TRANSACTION;
-              CREATE TABLE kext_load_history_v3 ( path TEXT PRIMARY KEY, team_id TEXT, bundle_id TEXT, boot_uuid TEXT, created_at TEXT, last_seen TEXT, flags INTEGER );
-              CREATE TABLE kext_policy ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, developer_name TEXT, flags INTEGER, PRIMARY KEY (team_id, bundle_id) );
               INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.VMwareGfx',1,'VMware, Inc.',1);
               INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmmemctl',1,'VMware, Inc.',1);
               INSERT INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmhgfs',1,'VMware, Inc.',1);
-              CREATE TABLE kext_policy_mdm ( team_id TEXT, bundle_id TEXT, allowed BOOLEAN, payload_uuid TEXT, PRIMARY KEY (team_id, bundle_id) );
-              CREATE TABLE settings ( name TEXT, value TEXT, PRIMARY KEY (name) );
               COMMIT;
             EOF
           end
