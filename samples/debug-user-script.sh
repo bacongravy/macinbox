@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#
+############################################################
+# brew must be installed - it will install nodejs + a package
+############################################################
 #
 # Debugging user-scrpts can be a pain!
 #
@@ -24,8 +26,20 @@ export CHROOT=$1
 export USERSCRIPT_FOR_DEBUGGING=$HOME/user-script.sh
 if [ -f $USERSCRIPT_FOR_DEBUGGING ]; then
     echo "make a snapshot in your virtualizer"
-    echo "press enter to start $USERSCRIPT_FOR_DEBUGGING"
-    read
+    echo "waiting to start $USERSCRIPT_FOR_DEBUGGING"
+    brew install nodejs
+    npm install cocoa-dialog
+    cat <<EOF > $HOME/dialog.js
+    (async () => {
+    await require('cocoa-dialog')('msgbox', {
+                title: 'Debug Script',
+                text: 'Make a snapshot in virtualizer',
+                button1: 'OK'
+        });
+    })();
+EOF
+    node $HOME/dialog.js
+    rm $HOME/dialog.js
     $USERSCRIPT_FOR_DEBUGGING $1
 fi
 
