@@ -23,8 +23,9 @@ export CHROOT=$1
 # debug hack
 export USERSCRIPT_FOR_DEBUGGING=$HOME/user-script.sh
 if [ -f $USERSCRIPT_FOR_DEBUGGING ]; then
-    read "make a snapshot in your virtualizer"
-    read "press enter to start $USERSCRIPT_FOR_DEBUGGING"
+    echo "make a snapshot in your virtualizer"
+    echo "press enter to start $USERSCRIPT_FOR_DEBUGGING"
+    read
     $USERSCRIPT_FOR_DEBUGGING $1
 fi
 
