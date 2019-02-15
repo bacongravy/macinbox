@@ -4,7 +4,6 @@
 # brew must be installed - it will install nodejs + a package
 #
 # $ brew install nodejs
-# $ npm install -g cocoa-dialog
 #
 ############################################################
 #
@@ -31,6 +30,7 @@ export USERSCRIPT_FOR_DEBUGGING=$HOME/user-script.sh
 if [ -f $USERSCRIPT_FOR_DEBUGGING ]; then
     echo "make a snapshot in your virtualizer"
     echo "waiting to start $USERSCRIPT_FOR_DEBUGGING"
+    npm install cocoa-dialog
     cat <<EOF > $HOME/dialog.js
     (async () => {
     await require('cocoa-dialog')('msgbox', {
