@@ -19,6 +19,8 @@ module Macinbox
     end
 
     def self.progress_bar(activity, percent_done)
+      return '' unless STDOUT.tty?
+
       @spinner ||= Enumerator.new { |e| loop { e.yield '|'; e.yield '/'; e.yield '-'; e.yield '\\' } }
       columns = STDOUT.winsize[1] - 8
       header = activity + ": " + percent_done.round(0).to_s + "% done "
