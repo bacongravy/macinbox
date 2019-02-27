@@ -5,6 +5,10 @@ FEATURES:
 - Add --verbose option to show the commands being run. [GH-28]
 - Add --user-script option to support running user-provided customizations. [GH-24]
 
+BUG FIXES:
+
+- Only display the animated progress bar when stderr is a tty. [GH-25]
+
 ## 3.2.0 (February 2, 2019)
 
 FEATURES:

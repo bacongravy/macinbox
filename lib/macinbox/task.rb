@@ -34,14 +34,18 @@ module Macinbox
       header + bar
     end
 
+    def self.print_progress_bar(io, activity, percent_done)
+      io.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, percent_done) + TTY::Color::RESET if io.isatty
+    end
+
     def self.run_with_progress(activity, cmd, opts={})
       STDERR.print TTY::Cursor::INVISIBLE
-      STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, 0.0) + TTY::Color::RESET
+      print_progress_bar(STDERR, activity, 0.0)
       Logger.info "Running command: #{Shellwords.join(cmd)}" if $verbose
       IO.popen cmd, opts do |pipe|
         pipe.each_line do |line|
           percent = yield line
-          STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, percent) + TTY::Color::RESET if percent
+          print_progress_bar(STDERR, activity, percent) if percent
         end
       end
       STDERR.puts TTY::Cursor::NORMAL
@@ -54,14 +58,14 @@ module Macinbox
       total_size = File.size(source)
       last_percent_done = -1
       STDERR.print TTY::Cursor::INVISIBLE
-      STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, 0.0) + TTY::Color::RESET
+      print_progress_bar(STDERR, activity, 0.0)
       File.open(source) do |file|
         until eof
           begin
             bytes_written += destination.write(file.readpartial(1024*1024))
             percent_done = ((bytes_written.to_f / total_size.to_f) * 100).round(1)
             last_percent_done = percent_done
-            STDERR.print TTY::Line::CLEAR + TTY::Color::GREEN + progress_bar(activity, percent_done) + TTY::Color::RESET
+            print_progress_bar(STDERR, activity, percent_done)
           rescue EOFError
             eof = true
           end
