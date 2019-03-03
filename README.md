@@ -49,6 +49,14 @@ To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you 
 
 **NOTE:** VMware Fusion Pro 11 is not yet supported for box creation; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information. As a workaround you can install `qemu-img` and pass the `--use-qemu` option.
 
+#### ESXi/vSphere
+
+If you install 'vSphere' or the free 'ESXi' software on a mac computer, you can use the create macinbox box files on the server.
+
+You will need vSphere/ESXi and the vagrant plugin:
+
+* [Vagrant ESXi Plugin](https://github.com/josenk/vagrant-vmware-esxi)
+
 #### Parallels Desktop
 
 To create and boot a box in the 'parallels' format you will need:
