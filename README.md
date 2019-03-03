@@ -53,7 +53,14 @@ To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you 
 
 If you install 'vSphere' or the free 'ESXi' software on a mac computer, you can use the create macinbox box files on the server.
 
-You will need vSphere/ESXi and the vagrant plugin:
+Download and install Vagrant on your local system using instructions from https://vagrantup.com/downloads.html.   
+```
+vagrant plugin install vagrant-vmware-esxi
+vagrant plugin list
+vagrant version
+```
+
+More informations on the vSphere/ESXi vagrant plugin can be found here:
 
 * [Vagrant ESXi Plugin](https://github.com/josenk/vagrant-vmware-esxi)
 
