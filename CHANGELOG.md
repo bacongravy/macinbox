@@ -1,12 +1,52 @@
-## Next version (Unreleased)
+## 3.3.0 (February 26, 2019)
 
 FEATURES:
 
-- Add support for vmware_desktop box format.
+- Add --verbose option to show the commands being run. [GH-28]
+- Add --user-script option to support running user-provided customizations. [GH-24]
+
+BUG FIXES:
+
+- Only display the animated progress bar when stderr is a tty. [GH-25]
+
+## 3.2.0 (February 2, 2019)
+
+FEATURES:
+
+- Add --use-qemu option to support building vmware_desktop boxes with qemu-img. [GH-12]
+- Add --installer-dmg option to support using installers wrapped in disk images. [GH-21]
+
+IMPROVEMENTS:
+
+- Use clonefile (`cp -c`) to copy files faster.
+- Use the detected OS version as the box version.
+- Skip creation of the wrapper image when it isn't necessary. [GH-21]
+
+## 3.1.0 (January 21, 2019)
+
+FEATURES:
+
+- Add support for virtualbox box format. [GH-18]
+
+BUG FIXES:
+
+- Make vagrant ssh key installation more reliable.
+- Update gemspec requirements for Mojave. [GH-17]
+
+## 3.0.0 (December 14, 2018)
+
+FEATURES:
+
+- Add support for vmware_desktop box format. [GH-14]
+- Add support for VAGRANT_HOME environment variable. [GH-15]
+
+IMPROVEMENTS:
+
+- Use full paths when invoking external commands. [GH-16]
 
 BREAKING CHANGES:
 
-- Switch default box format to vmware_desktop. Requires the Vagrant VMware Desktop Plugin.
+- Switch default box format to vmware_desktop. Requires the Vagrant VMware Desktop Plugin. [GH-14]
 
 ## 2.0.1 (November 16, 2018)
 

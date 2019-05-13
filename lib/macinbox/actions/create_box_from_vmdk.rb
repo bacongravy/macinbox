@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'rubygems/package'
 
+require 'macinbox/copyfiles'
 require 'macinbox/error'
 require 'macinbox/logger'
 require 'macinbox/task'
@@ -25,10 +26,9 @@ module Macinbox
         @hidpi             = opts[:hidpi]
 
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("VMDK not found") unless File.exist? @input_vmdk
-        raise Macinbox::Error.new("Box format not supported: #{@box_format}") unless ["vmware_fusion", "vmware_desktop"].include? @box_format        
+        raise Macinbox::Error.new("Box format not supported: #{@box_format}") unless ["vmware_fusion", "vmware_desktop"].include? @box_format
       end
 
       def run
@@ -128,7 +128,7 @@ module Macinbox
             end
           EOF
 
-          FileUtils.cp @input_vmdk, "#{@box_dir}/macinbox.vmdk"
+          Macinbox::copyfiles(from: @input_vmdk, to: "#{@box_dir}/macinbox.vmdk")
 
         end
 

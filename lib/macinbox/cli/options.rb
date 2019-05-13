@@ -23,6 +23,8 @@ module Macinbox
       :hidpi           => true,
       :fullscreen      => true,
       :gui             => true,
+      :use_qemu        => false,
+      :verbose         => false,
       :debug           => false,
     }
 
@@ -44,9 +46,11 @@ module Macinbox
         o.on('-f', '--full NAME',          'Full name of the user   (default: Vagrant)')  { |v| @options[:full_name] = v }
         o.on('-p', '--password PASSWORD',  'Password of the user    (default: vagrant)')  { |v| @options[:password] = v }
         o.separator ''
-        o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = v }
-        o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = v }
-        o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = v }
+        o.on(      '--installer PATH',     'Path to the macOS installer app')             { |v| @options[:installer_path] = File.absolute_path(v) }
+        o.on(      '--installer-dmg PATH', 'Path to a macOS installer app disk image')    { |v| @options[:installer_dmg] = File.absolute_path(v) }
+        o.on(      '--vmware PATH',        'Path to the VMware Fusion app')               { |v| @options[:vmware_path] = File.absolute_path(v) }
+        o.on(      '--parallels PATH',     'Path to the Parallels Desktop app')           { |v| @options[:parallels_path] = File.absolute_path(v) }
+        o.on(      '--user-script PATH',   'Path to user script')                         { |v| @options[:user_script] = File.absolute_path(v) }
         o.separator ''
         o.on(      '--no-auto-login',      'Disable auto login')                          { |v| @options[:auto_login] = v }
         o.on(      '--no-skip-mini-buddy', 'Show the mini buddy on first login')          { |v| @options[:skip_mini_buddy] = v }
@@ -54,7 +58,10 @@ module Macinbox
         o.on(      '--no-fullscreen',      'Display the virtual machine GUI in a window') { |v| @options[:fullsceen] = v }
         o.on(      '--no-gui',             'Disable the GUI')                             { |v| @options[:gui] = v }
         o.separator ''
-        o.on(      '--debug',              'Enable debug mode')                           { |v| @options[:debug] = v }
+        o.on(      '--use-qemu',           'Use qemu-img (vmware_desktop only)')          { |v| @options[:use_qemu] = v }
+        o.separator ''
+        o.on(      '--verbose',            'Enable verbose mode')                         { |v| $verbose = v }
+        o.on(      '--debug',              'Enable debug mode')                           { |v| $debug = $verbose = v }
         o.separator ''
         o.on('-v', '--version')                                                           { puts "macinbox #{Macinbox::VERSION}"; exit }
         o.on('-h', '--help')                                                              { puts o; exit }

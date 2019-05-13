@@ -7,7 +7,7 @@ Puts macOS Mojave in a Vagrant box.
   <i>Some sequences shortened. Original run time 14.5 minutes.</i>
 </p>
 
-Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop' or 'parallels' formats.
+Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop', 'parallels', or 'virtualbox' formats.
 
 ## System Requirements
 
@@ -16,22 +16,51 @@ Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop' or 'para
 * At least 2 cores (4 recommended)
 * At least 100 GB of available disk space
 
-## Dependencies
+## Additional Dependencies
 
-The following software is required. Versions other than those mentioned may work, but these are the latest versions tested:
+The following software is required. Versions other than those mentioned may work, but these are the latest versions tested.
 
-* [macOS 10.14.1 Mojave installer application](http://appstore.com/mac/macosmojave)
-* [Vagrant 2.2.1](https://www.vagrantup.com/)
+### Vagrant
 
-To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you must also have:
+To boot a box created by `macinbox` you will need Vagrant:
 
-* [VMware Fusion Pro 10.1.4](http://www.vmware.com/products/fusion.html)
+* [Vagrant 2.2.3](https://www.vagrantup.com/)
+
+### macOS Installer
+
+To create a box you will need a macOS installer application:
+
+* [macOS 10.14.3 Mojave installer application](http://appstore.com/mac/macosmojave)
+
+Previous versions of the macOS installer (e.g. High Sierra) may also work.
+
+**NOTE:** If you have questions about the permissibility of virtualizing macOS you may want to review the documentation for the virtualization software you are using and the [software license agreement](https://www.apple.com/legal/sla/) for macOS.
+
+### Virtualization Software
+
+One of the following virtualization applications is required:
+
+#### VMware Fusion
+
+To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you will need:
+
+* [VMware Fusion Pro 10.1.5](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
 
-To create and boot a box in the 'parallels' format you must also have:
+**NOTE:** VMware Fusion Pro 11 is not yet supported for box creation; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information. As a workaround you can install `qemu-img` and pass the `--use-qemu` option.
 
-* [Parallels Desktop 13 for Mac Pro Edition 13.3.2](https://www.parallels.com/products/desktop/)
+#### Parallels Desktop
+
+To create and boot a box in the 'parallels' format you will need:
+
+* [Parallels Desktop 14 for Mac Pro Edition 14.1.0](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
+
+#### VirtualBox
+
+To create and boot a box in the 'virtualbox' format you will need:
+
+* [VirtualBox 6.0.2 with the extension pack](https://www.virtualbox.org)
 
 ## Installation
 
@@ -74,8 +103,10 @@ Usage: macinbox [options]
     -p, --password PASSWORD          Password of the user    (default: vagrant)
 
         --installer PATH             Path to the macOS installer app
+        --installer-dmg PATH         Path to a macOS installer app disk image
         --vmware PATH                Path to the VMware Fusion app
         --parallels PATH             Path to the Parallels Desktop app
+        --user-script PATH           Path to user script
 
         --no-auto-login              Disable auto login
         --no-skip-mini-buddy         Show the mini buddy on first login
@@ -83,6 +114,9 @@ Usage: macinbox [options]
         --no-fullscreen              Display the virtual machine GUI in a window
         --no-gui                     Disable the GUI
 
+        --use-qemu                   Use qemu-img (vmware_desktop only)
+
+        --verbose                    Enable verbose mode
         --debug                      Enable debug mode
 
     -v, --version
@@ -93,15 +127,31 @@ Enabling debug mode causes the intermediate files (disk image, VMDK, and box) to
 
 This advanced example creates and adds a box named 'macinbox-large-nogui' with 4 cores, 8 GB or RAM, and a 128 GB disk; turns off auto login; and prevents the VMware GUI from being shown when the VM is started:
 
-    $ macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
+    $ sudo macinbox -n macinbox-large-nogui -c 4 -m 8192 -d 128 --no-auto-login --no-gui
+
+If you have the VAGRANT_HOME environment variable set and want the created box to be added to the 'boxes' directory in that location you will need to tell sudo to pass it through to macinbox, e.g.:
+
+    $ sudo "VAGRANT_HOME=${VAGRANT_HOME}" macinbox
 
 ## Retina Display and HiDPI Support
 
-By default `macinbox` will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution.  You can disable this behavior using the `--no-hidpi` option.
+By default `macinbox` will configure the guest OS to have HiDPI resolutions enabled, and configure the virtual machine to use the native display resolution. You can disable this behavior using the `--no-hidpi` option.
 
 ## Box Format Support
 
-By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format with the VMware Tools pre-installed. When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+By default `macinbox` will create a Vagrant box in the 'vmware_desktop' format with the VMware Tools pre-installed.
+
+When the box format is set to 'parallels' using the `--box-format` option then the Parallels Tools are pre-installed instead.
+
+When the box format is set to 'virtualbox' no guest extensions are installed. Note that some features behave differently with VirtualBox. The screen resolution is set to 1280x800 and HiDPI resolutions are not supported. The GUI scale factor is set to 2.0 (so that the VM displays properly on a host with a retina display) unless the `--no-hidpi` option is used. Lastly, ssh port-forwarding is enabled by default so that the host can connect to the guest.
+
+## User scripts
+
+If additional box customization is required a user script may be specified using the `--user-script` option. The script is run after the OS has been installed and will be provided with the path to the install location as its first and only argument. The script must be executable and exit with code zero or the box creation will be aborted.
+
+## Installer Disk Image Support
+
+The `--installer-dmg` option allows you to indicate the path to a disk image containing a macOS installer, and overrides the `--installer` option. The specified disk image should not already be mounted; `macinbox` will mount and unmount it as needed. This feature allows you to use the installer disk images created by [installinstallmacos.py](https://github.com/munki/macadmin-scripts/blob/master/installinstallmacos.py) as part of the `macinbox` workflow.
 
 ## Implementation Details
 
@@ -125,7 +175,7 @@ This tool performs the following actions:
 The box created by this tool includes a built-in Vagrantfile which disables the following default Vagrant behaviors:
 
 1. Checking Vagrant Cloud for new versions of the box
-1. Forwarding from port 2222 on the host to port 22 (ssh) on the guest
+1. Forwarding from port 2222 on the host to port 22 (ssh) on the guest (VMware Fusion and Parallels Desktop only)
 1. Sharing the root folder of the Vagrant environment as '/vagrant' on the guest
 
 To re-enable the default ssh port forwarding you can add the following line to your environment's Vagrantfile:
@@ -151,6 +201,7 @@ This project was inspired by the great work of others:
 * https://github.com/boxcutter/macos
 * https://github.com/chilcote/vfuse
 * http://www.modtitan.com/2017/10/lazy-vm-building-hacks-with-autodmg-and.html
+* https://github.com/AlexanderWillner/runMacOSinVirtualBox
 
 ## Why?
 
@@ -175,17 +226,41 @@ opts = Macinbox::CLI::DEFAULT_OPTION_VALUES
 opts[:collector] = Macinbox::Collector.new
 opts[:full_name] = "Vagrant"
 opts[:password] = "vagrant"
-opts[:box_format] = "parallels"
-opts[:image_path] = "macinbox.dmg"
-opts[:vmdk_path] = "macinbox.vmdk"
-opts[:hdd_path] = "macinbox.hdd"
-opts[:box_path] = "macinbox.box"
+opts[:image_path] = "macinbox.sparseimage"
+opts[:boxes_dir] = File.expand_path "~/.vagrant.d/boxes"
 opts[:debug] = true
+
 include Macinbox::Actions
+
+opts[:macos_version] = CheckMacosVersions.new(opts).run
+
 CreateImageFromInstaller.new(opts).run
+
+opts[:vmdk_path] = "macinbox.vmdk"
 CreateVMDKFromImage.new(opts).run
-CreateHDDFromVMDK.new(opts).run
+
+opts[:box_format] = "vmware_desktop"
+opts[:box_path] = "vmware_desktop.box"
+CreateBoxFromVMDK.new(opts).run
+InstallBox.new(opts).run
+
+opts[:hdd_path] = "macinbox.hdd"
+CreateHDDFromImage.new(opts).run
+
+opts[:box_format] = "parallels"
+opts[:box_path] = "parallels.box"
 CreateBoxFromHDD.new(opts).run
+InstallBox.new(opts).run
+
+opts[:vdi_path] = "macinbox.vdi"
+CreateVDIFromImage.new(opts).run
+
+opts[:box_format] = "virtualbox"
+opts[:box_path] = "virtualbox.box"
+CreateBoxFromVDI.new(opts).run
+InstallBox.new(opts).run
+
+opts[:collector].cleanup!
 ```
 
 To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).

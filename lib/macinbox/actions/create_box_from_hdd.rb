@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'rubygems/package'
 
+require 'macinbox/copyfiles'
 require 'macinbox/error'
 require 'macinbox/logger'
 require 'macinbox/task'
@@ -24,7 +25,6 @@ module Macinbox
         @hidpi             = opts[:hidpi]
 
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
-        @debug             = opts[:debug]
 
         raise Macinbox::Error.new("HDD not found") unless File.exist? @input_hdd
       end
@@ -54,7 +54,7 @@ module Macinbox
             end
           EOF
 
-          task_opts = @debug ? {} : { :out => File::NULL }
+          task_opts = $verbose ? {} : { :out => File::NULL }
 
           Task.run %W[ prlctl create macinbox -o macos --no-hdd --dst #{@box_dir} ] + [task_opts]
 
@@ -62,7 +62,8 @@ module Macinbox
             Task.run %W[ prlctl unregister macinbox ] + [task_opts]
           end
 
-          Task.run %W[ cp -r #{@input_hdd} #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
+          Macinbox::copyfiles(from: @input_hdd, to: "#{@box_dir}/macinbox.pvm/macinbox.hdd", recursive: true)
+          
           Task.run %W[ prl_disk_tool convert --merge --hdd #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
           Task.run %W[ prlctl set macinbox --device-add hdd --image #{@box_dir}/macinbox.pvm/macinbox.hdd ] + [task_opts]
           Task.run %W[ prlctl set macinbox --high-resolution #{@hidpi ? "on" : "off"} ] + [task_opts]
