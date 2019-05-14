@@ -29,27 +29,35 @@ module Macinbox
         end
       end
 
+      def app_is_running?(app_name)
+        `ps aux` =~ /#{app_name}/ ? true : false
+      end
+
       def start_privileged_helper(helper_name)
-        targetBinDir   = "/Library/PrivilegedHelperTools"
-        targetPlistDir = "/Library/LaunchDaemons"
-        sourceBin      = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}"
-        sourcePlist    = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}.plist"
-        targetBin      = "#{targetBinDir}/#{helper_name}"
-        targetPlist    = "#{targetPlistDir}/#{helper_name}.plist"
-        Task.run %W[ cp -f -- #{sourceBin} #{targetBinDir} ]
-        Task.run %W[ chmod 544 #{targetBin} ]
-        Task.run %W[ cp -f -- #{sourcePlist} #{targetPlistDir} ]
-        Task.run %W[ chmod 644 #{targetPlist} ]
-        Task.run %W[ launchctl load #{targetPlist} ]
+        if !app_is_running?("VMware Fusion.app/Contents/MacOS/VMware Fusion")
+          targetBinDir   = "/Library/PrivilegedHelperTools"
+          targetPlistDir = "/Library/LaunchDaemons"
+          sourceBin      = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}"
+          sourcePlist    = "#{@vmware_fusion_app}/Contents/Library/LaunchServices/#{helper_name}.plist"
+          targetBin      = "#{targetBinDir}/#{helper_name}"
+          targetPlist    = "#{targetPlistDir}/#{helper_name}.plist"
+          Task.run %W[ cp -f -- #{sourceBin} #{targetBinDir} ]
+          Task.run %W[ chmod 544 #{targetBin} ]
+          Task.run %W[ cp -f -- #{sourcePlist} #{targetPlistDir} ]
+          Task.run %W[ chmod 644 #{targetPlist} ]
+          Task.run %W[ launchctl load #{targetPlist} ]
+        end
       end
 
       def stop_privileged_helper(helper_name)
-        targetBin   = "/Library/PrivilegedHelperTools/#{helper_name}"
-        targetPlist = "/Library/LaunchDaemons/#{helper_name}.plist"
-        Task.run %W[ launchctl stop #{helper_name} ]
-        Task.run %W[ launchctl unload #{targetPlist} ]
-        Task.run %W[ rm #{targetBin} ]
-        Task.run %W[ rm #{targetPlist} ]
+        if !app_is_running?("VMware Fusion.app/Contents/MacOS/VMware Fusion")
+          targetBin   = "/Library/PrivilegedHelperTools/#{helper_name}"
+          targetPlist = "/Library/LaunchDaemons/#{helper_name}.plist"
+          Task.run %W[ launchctl stop #{helper_name} ]
+          Task.run %W[ launchctl unload #{targetPlist} ]
+          Task.run %W[ rm #{targetBin} ]
+          Task.run %W[ rm #{targetPlist} ]
+        end
       end
 
       def run
