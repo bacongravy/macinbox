@@ -228,7 +228,7 @@ opts[:full_name] = "Vagrant"
 opts[:password] = "vagrant"
 opts[:image_path] = "macinbox.sparseimage"
 opts[:boxes_dir] = File.expand_path "~/.vagrant.d/boxes"
-opts[:debug] = true
+$debug = $verbose = true
 
 include Macinbox::Actions
 
