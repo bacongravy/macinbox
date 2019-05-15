@@ -6,6 +6,7 @@ require 'macinbox/error'
 require 'macinbox/logger'
 require 'macinbox/task'
 require 'macinbox/virtual_disk'
+require 'macinbox/vmdk'
 
 module Macinbox
 
@@ -139,10 +140,9 @@ module Macinbox
           else
             @disk.attach
             task_opts = $verbose ? {} : { :out => File::NULL }
-            rawdiskCreator = "#{@vmware_fusion_app}/Contents/Library/vmware-rawdiskCreator"
             vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
             Dir.chdir(@temp_dir) do
-              Task.run %W[ #{rawdiskCreator} create #{@disk.device} fullDevice rawdisk lsilogic ] + [task_opts]
+              VMDK.create_raw_vmdk(@disk.device, "rawdisk.vmdk")
               Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
             end
             @disk.eject
