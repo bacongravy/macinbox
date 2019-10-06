@@ -95,8 +95,10 @@ module Macinbox
           FileUtils.mkdir tools_expanded_packages_dir
 
           tools_packages.each do |package|
-            Task.run %W[ /usr/sbin/pkgutil --expand #{tools_packages_dir}/#{package} #{tools_expanded_packages_dir}/#{package} ]
-            Task.run %W[ /usr/bin/ditto -x -z #{tools_expanded_packages_dir}/#{package}/Payload #{@image_mountpoint} ]
+            if File.exist? "#{tools_packages_dir}/#{package}"
+              Task.run %W[ /usr/sbin/pkgutil --expand #{tools_packages_dir}/#{package} #{tools_expanded_packages_dir}/#{package} ]
+              Task.run %W[ /usr/bin/ditto -x -z #{tools_expanded_packages_dir}/#{package}/Payload #{@image_mountpoint} ]
+            end
           end
 
           prl_nettool_source = "/Library/Parallels Guest Tools/prl_nettool"
