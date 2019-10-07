@@ -48,6 +48,7 @@ module Macinbox
         install_macos
         create_rc_vagrant
         automate_user_account_creation
+        automate_vagrant_group_creation
         automate_vagrant_ssh_key_installation
         enable_passwordless_sudo
         enable_sshd
@@ -162,6 +163,23 @@ module Macinbox
             </dict>
             </plist>
           EOF
+        end
+      end
+
+      def automate_vagrant_group_creation
+        if @short_name == "vagrant"
+          Logger.info "Configuring the 'vagrant' group..." do
+            contents = <<~EOF
+              until dscl . -read /Users/vagrant UniqueID; do
+                sleep 1
+              done
+              dscl . -create /Groups/vagrant
+              dscl . -create /Groups/vagrant gid 501
+              dscl . -create /Groups/vagrant GroupMembers `dscl . -read /Users/vagrant GeneratedUID | cut -d ' ' -f 2`
+              dscl . -create /Groups/vagrant GroupMembership vagrant
+            EOF
+            File.write @scratch_rc_vagrant, contents, mode: 'a'
+          end
         end
       end
 
