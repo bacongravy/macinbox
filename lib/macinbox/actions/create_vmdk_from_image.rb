@@ -15,12 +15,14 @@ module Macinbox
     class CreateVMDKFromImage
 
       def initialize(opts)
-        @input_image       = opts[:image_path]  or raise ArgumentError.new(":image_path not specified")
-        @output_path       = opts[:vmdk_path]   or raise ArgumentError.new(":vmdk_path not specified")
-        @vmware_fusion_app = opts[:vmware_path] or raise ArgumentError.new(":vmware_path not specified")
+        @input_image       = opts[:image_path]    or raise ArgumentError.new(":image_path not specified")
+        @output_path       = opts[:vmdk_path]     or raise ArgumentError.new(":vmdk_path not specified")
+        @vmware_fusion_app = opts[:vmware_path]   or raise ArgumentError.new(":vmware_path not specified")
         @use_qemu          = opts[:use_qemu]
 
-        @collector         = opts[:collector]   or raise ArgumentError.new(":collector not specified")
+        @macos_version     = opts[:macos_version] or raise ArgumentError.new(":macos_version not specified")
+
+        @collector         = opts[:collector]     or raise ArgumentError.new(":collector not specified")
 
         raise Macinbox::Error.new("input image not found")   unless File.exist? @input_image
         raise Macinbox::Error.new("VMware Fusion not found") unless File.exist? @vmware_fusion_app
@@ -34,8 +36,10 @@ module Macinbox
         create_temp_dir
         copy_input_image
         attach_image
-        install_vmware_tools
-        set_spc_kextpolicy
+        if @macos_version.is_mojave_or_earlier?
+          install_vmware_tools
+          set_spc_kextpolicy
+        end
         eject_image
         convert_image
         save_image
