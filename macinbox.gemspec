@@ -24,8 +24,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '~> 2.3'
 
-  s.requirements << "macOS Mojave"
-  s.requirements << "macOS Mojave installer app"
+  s.requirements << "macOS Catalina"
+  s.requirements << "macOS Catalina installer app"
   s.requirements << "Vagrant"
 
 end
