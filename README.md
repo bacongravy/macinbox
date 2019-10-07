@@ -47,8 +47,6 @@ To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you 
 * [VMware Fusion Pro 10.1.5](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
 
-**NOTE:** VMware Fusion Pro 11 is not yet supported for box creation; see [issue #12](https://github.com/bacongravy/macinbox/issues/12) for more information. As a workaround you can install `qemu-img` and pass the `--use-qemu` option.
-
 #### Parallels Desktop
 
 To create and boot a box in the 'parallels' format you will need:

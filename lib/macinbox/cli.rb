@@ -57,8 +57,12 @@ module Macinbox
         raise Macinbox::Error.new("Box format not supported: #{@options[:box_format]}")
       end
 
-      if /^vmware_(fusion|desktop)$/ === @options[:box_format] && !File.exists?(@options[:vmware_path])
-        raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
+      if /^vmware_(fusion|desktop)$/ === @options[:box_format]
+        unless File.exists?(@options[:vmware_path])
+          raise Macinbox::Error.new("VMware Fusion app not found: #{@options[:vmware_path]}")
+        end
+        vmware_version = Task.backtick %W[ defaults read #{@options[:vmware_path]}/Contents/Info.plist CFBundleShortVersionString ]
+        @options[:vmware_major_version] = vmware_version.split(".")[0].to_i rescue 10
       end
 
       if /^parallels$/ === @options[:box_format] && !File.exists?(@options[:parallels_path])
@@ -71,6 +75,18 @@ module Macinbox
 
       if @options[:use_qemu] && !File.exists?('/usr/local/bin/qemu-img')
         raise Macinbox::Error.new("QEMU not found: /usr/local/bin/qemu-img")
+      end
+
+      if /^vmware_(fusion|desktop)$/ === @options[:box_format] && !@options[:use_qemu] && @options[:vmware_major_version] >= 11
+        fusion_is_not_running = false
+        begin
+          Task.run %W[ pgrep -q #{"^VMware Fusion$"} ]
+        rescue
+          fusion_is_not_running = true
+        end
+        if fusion_is_not_running || !File.exist?("/Library/PrivilegedHelperTools/com.vmware.DiskHelper")
+          raise Macinbox::Error.new("VMware Fusion is not running and the workaround was not detected. See https://kb.vmware.com/s/article/65163 for more information, or try the --use-qemu option.")
+        end
       end
 
       vagrant_home = ENV["VAGRANT_HOME"]

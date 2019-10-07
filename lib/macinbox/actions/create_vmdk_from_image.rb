@@ -143,7 +143,12 @@ module Macinbox
             vdiskmanager = "#{@vmware_fusion_app}/Contents/Library/vmware-vdiskmanager"
             Dir.chdir(@temp_dir) do
               VMDK.create_raw_vmdk(@disk.device, "rawdisk.vmdk")
-              Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
+              begin
+                Task.run %W[ #{vdiskmanager} -t 0 -r rawdisk.vmdk macinbox.vmdk ] + [task_opts]
+              rescue Macinbox::Error => e
+                Logger.error "If the conversion failed due to an AppleXPC error please see https://kb.vmware.com/s/article/65163 for a possible workaround."
+                raise e
+              end
             end
             @disk.eject
           end
