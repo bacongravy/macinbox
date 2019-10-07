@@ -25,6 +25,8 @@ module Macinbox
         @fullscreen        = opts[:fullscreen]
         @hidpi             = opts[:hidpi]
 
+        @macos_version     = opts[:macos_version]   or raise ArgumentError.new(":macos_version not specified")
+
         @collector         = opts[:collector]       or raise ArgumentError.new(":collector not specified")
 
         raise Macinbox::Error.new("VMDK not found") unless File.exist? @input_vmdk
@@ -41,12 +43,19 @@ module Macinbox
 
           FileUtils.mkdir @box_dir
 
+          virtual_hw_version = 16
+          if @macos_version.is_mojave_or_earlier?
+            virtual_hw_version = 14
+          end
+
+          guest_os = "darwin#{@macos_version.darwin_major}-64"
+
           File.open "#{@box_dir}/macinbox.vmx", 'w' do |file|
 
             file.write <<~EOF
               .encoding = "UTF-8"
               config.version = "8"
-              virtualHW.version = "14"
+              virtualHW.version = "#{virtual_hw_version}"
               numvcpus = "#{@cpu_count}"
               memsize = "#{@memory_size}"
               sata0.present = "TRUE"
@@ -90,7 +99,7 @@ module Macinbox
               board-id.reflectHost = "TRUE"
               firmware = "efi"
               displayName = "#{@box_name}"
-              guestOS = "darwin17-64"
+              guestOS = "#{guest_os}"
               nvram = "macinbox.nvram"
               virtualHW.productCompatibility = "hosted"
               keyboardAndMouseProfile = "macProfile"
