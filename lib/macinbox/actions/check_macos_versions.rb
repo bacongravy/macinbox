@@ -1,3 +1,6 @@
+require "macinbox/error"
+require "macinbox/os_version"
+
 module Macinbox
 
   module Actions
@@ -16,21 +19,14 @@ module Macinbox
         install_info_plist = "#{@installer_app}/Contents/SharedSupport/InstallInfo.plist"
         raise Macinbox::Error.new("InstallInfo.plist not found in installer app bundle") unless File.exist? install_info_plist
 
-        installer_os_version = Task.backtick %W[ /usr/libexec/PlistBuddy -c #{'Print :System\ Image\ Info:version'} #{install_info_plist} ]
-        installer_os_version_components = installer_os_version.split(".") rescue [0, 0, 0]
-        installer_os_version_major = installer_os_version_components[0]
-        installer_os_version_minor = installer_os_version_components[1]
+        installer_os_version = Macinbox::OSVersion.new(Task.backtick %W[ /usr/libexec/PlistBuddy -c #{'Print :System\ Image\ Info:version'} #{install_info_plist} ])
         Logger.info "Installer macOS version detected: #{installer_os_version}" if $verbose
 
-        host_os_version = Task.backtick %W[ /usr/bin/sw_vers -productVersion ]
-        host_os_version_components = host_os_version.split(".") rescue [0, 0, 0]
-        host_os_version_major = host_os_version_components[0]
-        host_os_version_minor = host_os_version_components[1]
+        host_os_version = Macinbox::OSVersion.new(Task.backtick %W[ /usr/bin/sw_vers -productVersion ])
         Logger.info "Host macOS version detected: #{host_os_version}" if $verbose
 
-        if installer_os_version_major != host_os_version_major || installer_os_version_minor != host_os_version_minor
+        if installer_os_version.major != host_os_version.major || installer_os_version.minor != host_os_version.minor
           Logger.error "Warning: host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match"
-          # raise Macinbox::Error.new("host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match")
         end
 
         installer_os_version
