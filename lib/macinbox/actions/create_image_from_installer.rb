@@ -107,17 +107,28 @@ module Macinbox
       end
 
       def create_rc_vagrant
-        scratch_rc_installer_cleanup = "#{@scratch_mountpoint}/private/etc/rc.installer_cleanup"
-        @scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
-        File.write scratch_rc_installer_cleanup, <<~EOF
-          #!/bin/sh
-          rm -f /etc/rc.installer_cleanup
-          /etc/rc.vagrant &
-          exit 0
+        first_boot_launch_daemon = "#{@scratch_mountpoint}/Library/LaunchDaemons/rc.vagrant.plist"
+        File.write first_boot_launch_daemon, <<~EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>Label</key>
+            <string>rc.vagrant</string>
+            <key>ProgramArguments</key>
+            <array>
+              <string>/etc/rc.vagrant</string>
+            </array>
+            <key>RunAtLoad</key>
+            <true/>
+          </dict>
+          </plist>
         EOF
-        FileUtils.chmod 0755, scratch_rc_installer_cleanup
+        FileUtils.chmod 0755, first_boot_launch_daemon
+        @scratch_rc_vagrant = "#{@scratch_mountpoint}/private/etc/rc.vagrant"
         File.write @scratch_rc_vagrant, <<~EOF
           #!/bin/sh
+          rm -r /Library/LaunchDaemons/rc.vagrant.plist
           rm -f /etc/rc.vagrant
         EOF
         FileUtils.chmod 0755, @scratch_rc_vagrant
