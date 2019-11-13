@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+BREAKING CHANGES:
+
+- Skip installation of VMware Tools on Catalina because it is not working properly.
+
 ## 3.4.0 (November 12, 2019)
 
 FEATURES:
