@@ -6,6 +6,7 @@ FEATURES:
 
 BREAKING CHANGES:
 
+- Use the Catalina installer app by default.
 - Skip installation of VMware Tools on Catalina because it is not working properly.
 
 ## 3.4.0 (November 12, 2019)

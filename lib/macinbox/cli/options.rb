@@ -14,7 +14,7 @@ module Macinbox
       :memory_size     => 2048,
       :cpu_count       => 2,
       :short_name      => "vagrant",
-      :installer_path  => "/Applications/Install macOS Mojave.app",
+      :installer_path  => "/Applications/Install macOS Catalina.app",
       :vmware_path     => "/Applications/VMware Fusion.app",
       :parallels_path  => "/Applications/Parallels Desktop.app",
       :vmware_tools    => true,
