@@ -1,6 +1,6 @@
 # macinbox
 
-Puts macOS Mojave in a Vagrant box.
+Puts macOS Catalina in a Vagrant box.
 
 <p align=center>
   <img src="https://raw.githubusercontent.com/bacongravy/macinbox/demo/demo.gif">
@@ -11,7 +11,7 @@ Supports creating boxes in either the 'vmware_fusion', 'vmware_desktop', 'parall
 
 ## System Requirements
 
-* macOS 10.14 Mojave host operating system
+* macOS 10.15 Catalina host operating system
 * At least 8 GB RAM (16 GB recommended)
 * At least 2 cores (4 recommended)
 * At least 100 GB of available disk space
@@ -28,11 +28,17 @@ To boot a box created by `macinbox` you will need Vagrant:
 
 ### macOS Installer
 
-To create a box you will need a macOS installer application:
+To create a box you will need a macOS installer application. If you are using a Catalina host you must use a Catalina installer:
+
+* [macOS Catalina installer application](http://appstore.com/mac/macoscatalina) Tested with 10.15, 10.15.1
+
+Catalina hosts cannot use earlier (e.g. macOS 10.14 Mojave) installers, and Mojave hosts cannot use Catalina installers.
+
+If you are using a Mojave host you should use a Mojave installer:
 
 * [macOS Mojave installer application](http://appstore.com/mac/macosmojave) Tested with 10.14.3, 10.14.4, 10.14.5, 10.14.6
 
-Previous versions of the macOS installer (e.g. High Sierra) may also work.
+It is recommended that you use the same version for the host and the installer, but previous versions of the macOS installer (e.g. macOS 10.13 High Sierra) may also work with Mojave hosts, and vice-versa.
 
 **NOTE:** If you have questions about the permissibility of virtualizing macOS you may want to review the documentation for the virtualization software you are using and the [software license agreement](https://www.apple.com/legal/sla/) for macOS.
 
