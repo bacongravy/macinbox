@@ -18,14 +18,4 @@ Gem::Specification.new do |s|
   s.bindir        = "exe"
   s.executables   = s.files.grep(%r{^exe/}) { |f| File.basename(f) }
   s.require_paths = ["lib"]
-
-  s.add_development_dependency "bundler", "~> 1.16"
-  s.add_development_dependency "rake", "~> 10.0"
-
-  s.required_ruby_version = '~> 2.3'
-
-  s.requirements << "macOS Mojave"
-  s.requirements << "macOS Mojave installer app"
-  s.requirements << "Vagrant"
-
 end

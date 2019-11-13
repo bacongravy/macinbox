@@ -6,15 +6,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    rake (10.5.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.16)
   macinbox!
-  rake (~> 10.0)
 
 BUNDLED WITH
    1.17.2
