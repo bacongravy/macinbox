@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    macinbox (3.3.1.pre0)
+    macinbox (3.4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -17,4 +17,4 @@ DEPENDENCIES
   rake (~> 10.0)
 
 BUNDLED WITH
-   1.16.1
+   1.17.2

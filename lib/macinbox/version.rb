@@ -1,3 +1,3 @@
 module Macinbox
-  VERSION = "3.3.1.pre0"
+  VERSION = "3.4.0"
 end

@@ -1,4 +1,17 @@
-## Next version (Unreleased)
+## 3.4.0 (November 12, 2019)
+
+FEATURES:
+
+- Create `vagrant` group on first boot of the box. [GH-37]
+- Add a preflight check to ensure that VMware disk conversion will be successful. [GH-12]
+
+BUG FIXES:
+
+- Handle missing package in Parallels Tools. [GH-43]
+
+IMPROVEMENTS:
+
+- Remove dependency on vmware-rawdiskCreator tool.
 
 ## 3.3.0 (February 26, 2019)
 
