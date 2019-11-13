@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+FEATURES:
+
+- Prevent incompatible host and guest OS versions from being used together. [GH-24]
+
 BREAKING CHANGES:
 
 - Skip installation of VMware Tools on Catalina because it is not working properly.

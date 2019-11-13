@@ -25,6 +25,15 @@ module Macinbox
         host_os_version = Macinbox::OSVersion.new(Task.backtick %W[ /usr/bin/sw_vers -productVersion ])
         Logger.info "Host macOS version detected: #{host_os_version}" if $verbose
 
+        unless installer_os_version.is_sierra_or_later?
+          raise Macinbox::Error.new("Installer macOS version is not supported: #{installer_os_version}")
+        end
+
+        if (host_os_version.is_catalina_or_later? && installer_os_version.is_mojave_or_earlier?) ||
+           (host_os_version.is_mojave_or_earlier? && installer_os_version.is_catalina_or_later?)
+          raise Macinbox::Error.new("macOS #{host_os_version} cannot install macOS #{installer_os_version}")
+        end
+
         if installer_os_version.major != host_os_version.major || installer_os_version.minor != host_os_version.minor
           Logger.error "Warning: host OS version (#{host_os_version}) and installer OS version (#{installer_os_version}) do not match"
         end
