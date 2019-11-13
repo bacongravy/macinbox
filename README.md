@@ -24,7 +24,7 @@ The following software is required. Versions other than those mentioned may work
 
 To boot a box created by `macinbox` you will need Vagrant:
 
-* [Vagrant 2.2.3](https://www.vagrantup.com/)
+* [Vagrant 2.2.5](https://www.vagrantup.com/)
 
 ### macOS Installer
 
@@ -44,21 +44,21 @@ One of the following virtualization applications is required:
 
 To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you will need:
 
-* [VMware Fusion Pro 10.1.5](http://www.vmware.com/products/fusion.html)
-* [Vagrant VMware Desktop Provider 2.0.1](https://www.vagrantup.com/vmware/)
+* [VMware Fusion Pro 11.5.1](http://www.vmware.com/products/fusion.html)
+* [Vagrant VMware Desktop Provider 2.0.3](https://www.vagrantup.com/vmware/)
 
 #### Parallels Desktop
 
 To create and boot a box in the 'parallels' format you will need:
 
-* [Parallels Desktop 14 for Mac Pro Edition 14.1.0](https://www.parallels.com/products/desktop/)
-* [Vagrant Parallels Provider 1.7.8](https://parallels.github.io/vagrant-parallels/)
+* [Parallels Desktop 15 for Mac Pro Edition 15.0.0](https://www.parallels.com/products/desktop/)
+* [Vagrant Parallels Provider 2.0.1](https://parallels.github.io/vagrant-parallels/)
 
 #### VirtualBox
 
 To create and boot a box in the 'virtualbox' format you will need:
 
-* [VirtualBox 6.0.2 with the extension pack](https://www.virtualbox.org)
+* [VirtualBox 6.0.12 with the extension pack](https://www.virtualbox.org)
 
 ## Installation
 
