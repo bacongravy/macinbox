@@ -30,13 +30,13 @@ To boot a box created by `macinbox` you will need Vagrant:
 
 To create a box you will need a macOS installer application. If you are using a Catalina host you must use a Catalina installer:
 
-* [macOS Catalina installer application](http://appstore.com/mac/macoscatalina) Tested with 10.15, 10.15.1, 10.15.3
+* [macOS Catalina installer application](https://apps.apple.com/us/app/macos-catalina/id1466841314?ls=1&mt=12) Tested with 10.15, 10.15.1, 10.15.3
 
 Catalina hosts cannot use earlier (e.g. macOS 10.14 Mojave) installers, and Mojave hosts cannot use Catalina installers.
 
 If you are using a Mojave host you should use a Mojave installer:
 
-* [macOS Mojave installer application](http://appstore.com/mac/macosmojave) Tested with 10.14.3, 10.14.4, 10.14.5, 10.14.6
+* [macOS Mojave installer application](https://apps.apple.com/us/app/macos-mojave/id1398502828?ls=1&mt=12) Tested with 10.14.3, 10.14.4, 10.14.5, 10.14.6
 
 It is recommended that you use the same version for the host and the installer, but previous versions of the macOS installer (e.g. macOS 10.13 High Sierra) may also work with Mojave hosts, and vice-versa.
 
