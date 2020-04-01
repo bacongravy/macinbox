@@ -49,6 +49,7 @@ module Macinbox
         end
       end
       STDERR.puts TTY::Cursor::NORMAL
+      $? == 0 or raise Macinbox::Error.new("#{cmd.slice(0)} failed with non-zero exit code: #{$?.to_i}")
     end
 
     def self.write_file_to_io_with_progress(source, destination)
