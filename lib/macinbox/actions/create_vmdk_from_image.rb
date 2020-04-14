@@ -36,10 +36,8 @@ module Macinbox
         create_temp_dir
         copy_input_image
         attach_image
-        if @macos_version.is_mojave_or_earlier?
-          install_vmware_tools
-          set_spc_kextpolicy
-        end
+        set_spc_kextpolicy
+        install_vmware_tools
         eject_image
         convert_image
         save_image
@@ -123,6 +121,8 @@ module Macinbox
             pipe.write <<~EOF
               PRAGMA foreign_keys=OFF;
               BEGIN TRANSACTION;
+              INSERT OR REPLACE INTO kext_load_history_v3 VALUES('/Library/Extensions/VMwareGfx.kext','EG7KH642X6','com.vmware.kext.VMwareGfx','F5E8FB21-EE9B-47F0-9C9C-FD6C4E41AC99','2020-04-13 16:29:03','2020-04-13 16:30:58',55);
+              INSERT OR REPLACE INTO kext_load_history_v3 VALUES('/Library/Application Support/VMware Tools/vmhgfs.kext','EG7KH642X6','com.vmware.kext.vmhgfs','F5E8FB21-EE9B-47F0-9C9C-FD6C4E41AC99','2020-04-13 16:29:04','2020-04-13 16:29:45',53);
               INSERT OR REPLACE INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.VMwareGfx',1,'VMware, Inc.',1);
               INSERT OR REPLACE INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmmemctl',1,'VMware, Inc.',1);
               INSERT OR REPLACE INTO kext_policy VALUES('EG7KH642X6','com.vmware.kext.vmhgfs',1,'VMware, Inc.',1);
