@@ -17,7 +17,7 @@ module Macinbox
         Logger.error "WARNING: Temporary files were not removed. Run this command to remove them:"
         Logger.error "sudo rm -rf #{temp_dir_args}"
       else
-        @temp_dirs.reverse.each do |temp_dir|
+        @temp_dirs.reverse_each do |temp_dir|
           FileUtils.remove_dir(temp_dir)
         end
       end
