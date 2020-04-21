@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+BUG FIXES:
+
+- Do not silently continue if the `installer` command fails. [GH-51]
+
 ## 4.1.0 (April 21, 2020)
 
 FEATURES:
