@@ -1,5 +1,9 @@
 ## Next version (Unreleased)
 
+FEATURES:
+
+- Re-enable installation of VMware Tools on Catalina. [GH-45]
+
 ## 4.0.0 (November 12, 2019)
 
 FEATURES:
