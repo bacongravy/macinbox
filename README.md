@@ -164,7 +164,7 @@ This tool performs the following actions:
 1. Wraps the installer app in a disk image
 1. Creates a new blank disk image
 1. Installs macOS
-1. Installs the VMware or Parallels tools (Note: VMware Tools installation is skipped on Catalina because it is not working)
+1. Installs the VMware or Parallels tools
 1. (VMware only) Updates the SystemPolicyConfiguration KextPolicy to allow the VMware tools kernel extension to load automatically
 1. Adds an .InstallerConfiguration file to automate the Setup Assistant app and create a user account on first boot
 1. Enables password-less sudo
