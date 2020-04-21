@@ -30,7 +30,7 @@ To boot a box created by `macinbox` you will need Vagrant:
 
 To create a box you will need a macOS installer application. If you are using a Catalina host you must use a Catalina installer:
 
-* [macOS Catalina installer application](https://apps.apple.com/us/app/macos-catalina/id1466841314?ls=1&mt=12) Tested with 10.15, 10.15.1, 10.15.3
+* [macOS Catalina installer application](https://apps.apple.com/us/app/macos-catalina/id1466841314?ls=1&mt=12) Tested with 10.15, 10.15.1, 10.15.3, 10.15.4
 
 Catalina hosts cannot use earlier (e.g. macOS 10.14 Mojave) installers, and Mojave hosts cannot use Catalina installers.
 
@@ -50,21 +50,21 @@ One of the following virtualization applications is required:
 
 To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you will need:
 
-* [VMware Fusion Pro 11.5.2](http://www.vmware.com/products/fusion.html)
+* [VMware Fusion Pro 11.5.3](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.3](https://www.vagrantup.com/vmware/)
 
 #### Parallels Desktop
 
 To create and boot a box in the 'parallels' format you will need:
 
-* [Parallels Desktop 15 for Mac Pro Edition 15.1.3](https://www.parallels.com/products/desktop/)
+* [Parallels Desktop 15 for Mac Pro Edition 15.1.4](https://www.parallels.com/products/desktop/)
 * [Vagrant Parallels Provider 2.0.1](https://parallels.github.io/vagrant-parallels/)
 
 #### VirtualBox
 
 To create and boot a box in the 'virtualbox' format you will need:
 
-* [VirtualBox 6.1.4 with the extension pack](https://www.virtualbox.org)
+* [VirtualBox 6.1.6 with the extension pack](https://www.virtualbox.org)
 
 ## Installation
 
