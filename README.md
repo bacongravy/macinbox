@@ -53,6 +53,21 @@ To create and boot a box in the 'vmware_fusion' or 'vmware_desktop' formats you 
 * [VMware Fusion Pro 11.5.3](http://www.vmware.com/products/fusion.html)
 * [Vagrant VMware Desktop Provider 2.0.3](https://www.vagrantup.com/vmware/)
 
+#### ESXi/vSphere
+
+If you install 'vSphere' or the free 'ESXi' software on a mac computer, you can use the create macinbox box files on the server.
+
+Download and install Vagrant on your local system using instructions from https://vagrantup.com/downloads.html.   
+```
+vagrant plugin install vagrant-vmware-esxi
+vagrant plugin list
+vagrant version
+```
+
+More informations on the vSphere/ESXi vagrant plugin can be found here:
+
+* [Vagrant ESXi Plugin](https://github.com/josenk/vagrant-vmware-esxi)
+
 #### Parallels Desktop
 
 To create and boot a box in the 'parallels' format you will need:
