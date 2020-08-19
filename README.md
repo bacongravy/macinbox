@@ -118,6 +118,8 @@ Usage: macinbox [options]
         --no-fullscreen              Display the virtual machine GUI in a window
         --no-gui                     Disable the GUI
 
+        --no-sip                     Disable System Integrity Protection (virtualbox only)
+
         --use-qemu                   Use qemu-img (vmware_desktop only)
 
         --verbose                    Enable verbose mode

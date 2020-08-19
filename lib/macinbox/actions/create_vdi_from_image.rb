@@ -4,6 +4,7 @@ require 'shellwords'
 require 'macinbox/copyfiles'
 require 'macinbox/error'
 require 'macinbox/logger'
+require 'macinbox/nvramfilewriter'
 require 'macinbox/task'
 require 'macinbox/virtual_disk'
 
@@ -18,6 +19,7 @@ module Macinbox
         @output_path       = opts[:vdi_path]    or raise ArgumentError.new(":vdi_path not specified")
 
         @collector         = opts[:collector]   or raise ArgumentError.new(":collector not specified")
+        @sip_enabled       = opts[:sip_enabled]
 
         raise Macinbox::Error.new("input image not found")   unless File.exist? @input_image
       end
@@ -58,12 +60,19 @@ module Macinbox
           @disk.mount_efi(at: efi_mountpoint)
           Task.run %W[ /bin/mkdir -p #{efi_mountpoint}/EFI/drivers ]
           Task.run %W[ /bin/cp /usr/standalone/i386/apfs.efi #{efi_mountpoint}/EFI/drivers/ ]
+          Task.run %W[ /bin/mkdir -p #{efi_mountpoint}/EFI/NVRAM ]
+          NVRAMFileWriter.write_binary_file("csr-active-config",
+                                           "7C436110-AB2A-4BBB-A880-FE41995C9F82",
+                                            @sip_enabled ? [0x10] : [0x77],
+                                            "#{efi_mountpoint}/EFI/NVRAM/csr-active-config.bin")
+
           File.write "#{efi_mountpoint}/startup.nsh", <<~'EOF'
             @echo -off
             echo "Loading APFS driver..."
             load "fs0:\EFI\drivers\apfs.efi"
             echo "Refreshing media mappings..."
             map -r
+            dmpstore -all -l fs0:\EFI\NVRAM\csr-active-config.bin
             echo "Searching for bootloader..."
             for %d in fs1 fs2 fs3 fs4 fs5 fs6
               if exist "%d:\System\Library\CoreServices\boot.efi" then
