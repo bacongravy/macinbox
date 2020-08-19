@@ -23,6 +23,7 @@ module Macinbox
       :hidpi           => true,
       :fullscreen      => true,
       :gui             => true,
+      :sip_enabled     => true,
       :use_qemu        => false,
       :verbose         => false,
       :debug           => false,
@@ -57,6 +58,8 @@ module Macinbox
         o.on(      '--no-hidpi',           'Disable HiDPI resolutions')                   { |v| @options[:hidpi] = v }
         o.on(      '--no-fullscreen',      'Display the virtual machine GUI in a window') { |v| @options[:fullsceen] = v }
         o.on(      '--no-gui',             'Disable the GUI')                             { |v| @options[:gui] = v }
+        o.separator ''
+        o.on(      '--no-sip',             'Disable System Integrity Protection (virtualbox only)') { |v| @options[:sip_enabled] = v }
         o.separator ''
         o.on(      '--use-qemu',           'Use qemu-img (vmware_desktop only)')          { |v| @options[:use_qemu] = v }
         o.separator ''
