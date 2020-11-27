@@ -50,7 +50,7 @@ module Macinbox
         ddb.geometry.sectors = "#{device_sectors_per_track}"
         ddb.longContentID = "9fa218b506cfe68615c39994fffffffe"
         ddb.uuid = "60 00 C2 99 91 76 dd 77-6e 0d 84 8b b0 24 6e 00"
-        ddb.virtualHWVersion = "14"
+        ddb.virtualHWVersion = "18"
       EOF
 
     end
